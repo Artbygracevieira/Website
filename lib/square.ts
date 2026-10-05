@@ -130,7 +130,7 @@ async function load(fresh = false): Promise<Artwork[]> {
       ...a,
       price: vd?.price_money ? vd.price_money.amount / 100 : a.price,
       available: a.available && !soldOut,
-      image: squareImage ?? a.image,
+      image: a.localPhoto ? a.image : squareImage ?? a.image,
     };
   });
 }

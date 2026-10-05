@@ -36,17 +36,31 @@ export default async function Home() {
             </div>
           </div>
 
-          {featured && (
-            <div className={`${s.wall} wall-${featured.wall ?? "mustard"} rise d2`}>
-              <Flower className={`${s.f1} spin-slow`} size={120} color="var(--pink)" center="var(--orange)" />
-              <Leaf className={s.l1} size={80} rotate={-30} />
-              <Flower className={`${s.f2} bob`} size={70} color="var(--paper)" center="var(--rose)" petals={6} />
-              <Link href={`/shop/${featured.slug}`} className={`${s.hung} ${featured.size.includes("round") ? s.round : ""}`}>
-                <span className={s.wire} aria-hidden="true" />
-                <span className={s.hungImg}>
-                  <Image src={featured.image} alt={featured.title} fill priority sizes="(max-width: 860px) 70vw, 32vw" />
-                </span>
-              </Link>
+          <div className={`${s.photoWrap} rise d2`}>
+            <Flower className={`${s.f1} spin-slow`} size={130} color="var(--pink)" center="var(--orange)" />
+            <Leaf className={s.l1} size={84} rotate={-30} />
+            <div className={s.photo}>
+              <Image src="/photos/grace-round-paintings.jpg" alt="Grace Vieira, right, with two women holding three of her round paintings at an event"
+                fill priority sizes="(max-width: 860px) 90vw, 42vw" style={{ objectPosition: "50% 60%" }} />
+            </div>
+            <div className={s.sticker}>Grace, <em>right</em>, with three of her round paintings</div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED PIECE */}
+      {featured && (
+        <section className={`${s.featured} wall-${featured.wall ?? "mustard"}`}>
+          <Flower className={`${s.f2} bob`} size={80} color="var(--paper)" center="var(--rose)" petals={6} />
+          <div className={`wrap ${s.featuredGrid}`}>
+            <Link href={`/shop/${featured.slug}`} className={`${s.hung} ${featured.size.includes("round") ? s.round : ""}`}>
+              <span className={s.wire} aria-hidden="true" />
+              <span className={s.hungImg}>
+                <Image src={featured.image} alt={featured.title} fill sizes="(max-width: 860px) 70vw, 34vw" />
+              </span>
+            </Link>
+            <div>
+              <div className="eyebrow">Featured painting</div>
               <div className={s.wallLabel}>
                 <div className={s.labelTop}>
                   <div>
@@ -55,12 +69,13 @@ export default async function Home() {
                   </div>
                   <div className={s.labelPrice}>{formatPrice(featured.price)}</div>
                 </div>
+                {featured.story[0] && <p className={s.labelStory}>{featured.story[featured.story.length - 1]}</p>}
                 <AddToCart slug={featured.slug} />
               </div>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* PAINTINGS */}
       {paintings.length > 0 && (
@@ -99,7 +114,7 @@ export default async function Home() {
       <section className={`${s.meet} wall-sky`}>
         <div className={`wrap ${s.meetGrid}`}>
           <div className={s.arch}>
-            <Image src="/photos/grace.jpg" alt="Grace Vieira beside her booth sign" fill sizes="(max-width: 860px) 90vw, 40vw" style={{ objectPosition: "50% 30%" }} />
+            <Image src="/photos/grace-headshot.jpg" alt="Grace Vieira" fill sizes="(max-width: 860px) 90vw, 40vw" style={{ objectPosition: "50% 35%" }} />
           </div>
           <div>
             <div className="eyebrow">Meet the artist</div>
