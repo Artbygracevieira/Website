@@ -2,7 +2,7 @@
 
 The website for [artbygracevieira.com](https://artbygracevieira.com): original paintings by Grace Vieira, Brooklyn, NY.
 
-Built with Next.js. Prices, photos, availability and checkout come from Grace's Square account. Hosting on Vercel is the next step.
+Built with Next.js and hosted on Vercel; every push to `main` goes live. Prices, photos, availability and checkout come from Grace's Square account.
 
 ## Run it on your computer
 
@@ -27,7 +27,8 @@ Then open http://localhost:3000. Without a token the site still runs, using the 
 | Event and booth photos | `public/photos/` |
 | Pages | `app/` (one folder per page) |
 | Shared pieces (header, footer, cart, email signup) | `components/` |
-| Colors and fonts | `app/globals.css` (top of the file) |
+| Colors and fonts | `app/globals.css` (top of the file) and `app/layout.tsx` |
+| The colored "wall" each piece hangs on | `wall` on each entry in `lib/artworks.ts` |
 | Old Squarespace links that redirect to new pages | `next.config.ts` |
 
 ### Pages
@@ -65,7 +66,7 @@ The canvas descriptions and the About page are Grace's own words from her origin
 
 - [ ] Place one real test order through checkout, then refund it in Square.
 - [ ] Add a shipping fee in `createCheckoutLink()` (`lib/square.ts`) once the shipping policy is set.
-- [ ] Connect the repo to Vercel and point the domain at it.
+- [ ] Upgrade Vercel to Pro, then point artbygracevieira.com at the Vercel project.
 - [ ] Hook the email signup (`components/JoinList.tsx`) to the email tool Grace picks.
 - [ ] Hook the contact form (`app/api/contact/route.ts`) to Grace's inbox, and add her email in `lib/site.ts`.
 - [ ] Fill in the shipping and returns page with Grace's real policy.

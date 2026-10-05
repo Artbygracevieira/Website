@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ArtCard from "@/components/ArtCard";
+import PageHead from "@/components/PageHead";
+import { formatPrice } from "@/lib/artworks";
 import { getAvailable } from "@/lib/square";
 
 export const metadata: Metadata = {
@@ -14,46 +16,53 @@ export default async function Shop() {
   const pieces = await getAvailable();
   const paintings = pieces.filter((a) => a.format === "canvas");
   const cards = pieces.filter((a) => a.format === "card");
+  const cardPrice = cards.length ? Math.min(...cards.map((c) => c.price)) : null;
 
   return (
-    <div className="wrap" style={{ paddingBottom: 96 }}>
-      <div style={{ padding: "56px 0 28px" }}>
-        <div className="eyebrow">Shop</div>
-        <h1>Available work</h1>
-        <p className="lead" style={{ marginTop: 12 }}>
-          Everything here is an original, painted by hand. There is only one of each.
-        </p>
+    <>
+      <PageHead
+        wall="teal"
+        eyebrow="Shop"
+        title={<>Available <em>work</em></>}
+        lead="Everything here is an original, painted by hand. There is only one of each."
+      >
         {paintings.length > 0 && cards.length > 0 && (
-          <p style={{ marginTop: 22, display: "flex", gap: 24 }}>
-            <a href="#paintings" className="link">Paintings</a>
-            <a href="#cards" className="link">Cards</a>
-          </p>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <a href="#paintings" className="btn light">Paintings ({paintings.length})</a>
+            <a href="#cards" className="btn light">Cards ({cards.length})</a>
+          </div>
         )}
+      </PageHead>
+
+      <div className="wrap" style={{ paddingBottom: 96 }}>
+        {pieces.length === 0 && (
+          <p className="lead" style={{ padding: "64px 0" }}>Everything has found a home for now. Join the list to hear about the next release.</p>
+        )}
+
+        {paintings.length > 0 && (
+          <section id="paintings" style={{ paddingTop: 64, scrollMarginTop: 100 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 16, flexWrap: "wrap", marginBottom: 36 }}>
+              <h2>Paintings</h2>
+              <p style={{ color: "var(--muted)" }}>Acrylic on canvas, ready to hang.</p>
+            </div>
+            <div className="grid">{paintings.map((a, i) => <ArtCard key={a.slug} art={a} priority={i < 4} />)}</div>
+          </section>
+        )}
+
+        {cards.length > 0 && (
+          <section id="cards" style={{ paddingTop: 96, scrollMarginTop: 100 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 16, flexWrap: "wrap", marginBottom: 36 }}>
+              <h2>Cards{cardPrice ? <>, <em>{formatPrice(cardPrice)} each</em></> : null}</h2>
+              <p style={{ color: "var(--muted)" }}>Small originals, hand-painted on paper.</p>
+            </div>
+            <div className="grid">{cards.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
+          </section>
+        )}
+
+        <p style={{ marginTop: 72, fontSize: 18 }}>
+          Looking for a piece you saw before? <Link href="/past-work" className="link">See past work</Link>
+        </p>
       </div>
-
-      {pieces.length === 0 && (
-        <p className="lead">Everything has found a home for now. Join the list to hear about the next release.</p>
-      )}
-
-      {paintings.length > 0 && (
-        <section id="paintings" style={{ borderTop: "1px solid var(--line)", paddingTop: 36, scrollMarginTop: 90 }}>
-          <h2 style={{ fontSize: 40, marginBottom: 6 }}>Paintings</h2>
-          <p style={{ color: "var(--muted)", marginBottom: 28 }}>Acrylic on canvas, ready to hang.</p>
-          <div className="grid">{paintings.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
-        </section>
-      )}
-
-      {cards.length > 0 && (
-        <section id="cards" style={{ borderTop: "1px solid var(--line)", paddingTop: 36, marginTop: 64, scrollMarginTop: 90 }}>
-          <h2 style={{ fontSize: 40, marginBottom: 6 }}>Cards</h2>
-          <p style={{ color: "var(--muted)", marginBottom: 28 }}>Small originals, hand-painted on paper. $30 each.</p>
-          <div className="grid">{cards.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
-        </section>
-      )}
-
-      <p style={{ marginTop: 56 }}>
-        Looking for a piece you saw before? <Link href="/past-work" className="link">See past work</Link>
-      </p>
-    </div>
+    </>
   );
 }

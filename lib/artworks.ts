@@ -13,6 +13,7 @@
 // Square code and IDs in, and save a photo as /public/art/<slug>.jpg as a backup.
 
 export type Format = "canvas" | "card";
+export type Wall = "terracotta" | "pink" | "teal" | "mustard" | "sky" | "orange" | "paper";
 
 export type Artwork = {
   slug: string;
@@ -28,6 +29,9 @@ export type Artwork = {
   image: string;
   // Squarespace URL this piece used to live at, so old links keep working
   oldPath?: string;
+  // Color of the "wall" the piece hangs on across the site. Pick one that sits
+  // well with the painting. Options: terracotta, pink, teal, mustard, sky, orange, paper.
+  wall?: Wall;
   // Link to Square. Leave out for pieces that only ever sold on Squarespace.
   square?: { code: string; itemId: string; variationId: string };
 };
@@ -35,6 +39,7 @@ export type Artwork = {
 export const artworks: Artwork[] = [
   {
     slug: "built-in-bloom",
+    wall: "mustard",
     title: "Built in Bloom",
     price: 400,
     square: { code: "R4", itemId: "MKRYX4DVPALOJIJ4N4XACUJU", variationId: "ZXLQDWQMEGL7QYIYBM5Q56AZ" },
@@ -52,6 +57,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "rooted-in-radiance",
+    wall: "teal",
     title: "Rooted in Radiance",
     price: 250,
     square: { code: "S5", itemId: "ZRRBWOUYABT4RK7YJTUOGHJH", variationId: "DP7LWCFBSLDTDO63PLCAIUND" },
@@ -70,6 +76,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "in-full-bloom",
+    wall: "sky",
     title: "In Full Bloom",
     price: 250,
     square: { code: "S6", itemId: "6Y4F5RHKXBB5VHCJLIJRQJCJ", variationId: "VEZ2UP47K7747AQWEV3QTHXW" },
@@ -87,6 +94,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "crowned-in-confidence",
+    wall: "pink",
     title: "Crowned in Confidence",
     price: 250,
     square: { code: "S2", itemId: "TF7I2BC2QUDRK2AF6QYB4GBM", variationId: "K6FBBOTBSTJQK6HEL6GCJLMM" },
@@ -105,6 +113,7 @@ export const artworks: Artwork[] = [
   // Hand-painted cards. Website titles here; Square keeps the C codes.
   {
     slug: "covered-in-color",
+    wall: "sky",
     title: "Covered in Color",
     price: 30,
     available: true,
@@ -117,6 +126,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "halo",
+    wall: "terracotta",
     title: "Halo",
     price: 30,
     available: true,
@@ -129,6 +139,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "one-blue-flower",
+    wall: "pink",
     title: "One Blue Flower",
     price: 30,
     available: true,
@@ -141,6 +152,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "garden-wrap",
+    wall: "mustard",
     title: "Garden Wrap",
     price: 30,
     available: true,
@@ -153,6 +165,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "flower-crown",
+    wall: "pink",
     title: "Flower Crown",
     price: 30,
     available: true,
@@ -165,6 +178,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "soft-curls",
+    wall: "mustard",
     title: "Soft Curls",
     price: 30,
     available: true,
@@ -177,6 +191,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "yellow-bucket-hat",
+    wall: "sky",
     title: "Yellow Bucket Hat",
     price: 30,
     available: true,
@@ -189,6 +204,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "blue-pattern",
+    wall: "orange",
     title: "Blue Pattern",
     price: 30,
     available: true,
@@ -201,6 +217,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "sun-at-her-back",
+    wall: "teal",
     title: "Sun at Her Back",
     price: 30,
     available: true,
@@ -213,6 +230,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "yellow-dress",
+    wall: "terracotta",
     title: "Yellow Dress",
     price: 30,
     available: true,
@@ -225,6 +243,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "pinwheel",
+    wall: "mustard",
     title: "Pinwheel",
     price: 30,
     available: true,
@@ -237,6 +256,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "brown-vase",
+    wall: "teal",
     title: "Brown Vase",
     price: 30,
     available: true,
@@ -249,6 +269,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "wildflower-field",
+    wall: "sky",
     title: "Wildflower Field",
     price: 30,
     available: true,
@@ -261,6 +282,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "all-the-pieces",
+    wall: "pink",
     title: "All the Pieces",
     price: 30,
     available: true,
@@ -273,6 +295,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "blue-gown",
+    wall: "mustard",
     title: "Blue Gown",
     price: 30,
     available: true,
@@ -285,6 +308,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "flourish",
+    wall: "mustard",
     title: "Flourish",
     price: 250,
     square: { code: "S4", itemId: "4R4NB3MAMTR62K7NRVFZWMH7", variationId: "MVWTXZJAT6L6QVS5YD3RJB3L" },
@@ -302,6 +326,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "its-my-time",
+    wall: "teal",
     title: "It's My Time",
     price: 400,
     square: { code: "R1", itemId: "PX4GZOJTCEKOPA64P352F5SS", variationId: "63Z4RZZJ4SUTHUYV2ILWYJ6S" },
@@ -318,6 +343,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "surviving-corporate-america",
+    wall: "sky",
     title: "Surviving Corporate America",
     price: 200,
     available: false,
@@ -332,6 +358,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "fully-seen",
+    wall: "teal",
     title: "Fully Seen",
     price: 400,
     square: { code: "R2", itemId: "QQ6ADGLYEJLS5OCTIGBLYTPN", variationId: "OICSMFLXTF6RZNLOQMHBXFLB" },
@@ -347,6 +374,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "bright-and-grounded",
+    wall: "pink",
     title: "Bright and Grounded",
     price: 30,
     available: false,
@@ -361,6 +389,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "every-side-of-me",
+    wall: "mustard",
     title: "Every Side of Me",
     price: 30,
     available: false,
@@ -375,6 +404,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "layered-beauty",
+    wall: "terracotta",
     title: "Layered Beauty",
     price: 30,
     available: false,
@@ -389,6 +419,7 @@ export const artworks: Artwork[] = [
   },
   {
     slug: "family-unit",
+    wall: "sky",
     title: "Family Unit",
     price: 30,
     available: false,

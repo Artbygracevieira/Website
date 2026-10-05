@@ -3,10 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import ArtCard from "@/components/ArtCard";
+import Flower, { Leaf } from "@/components/Flower";
 import { AddToCart } from "@/components/Cart";
 import { artworks, formatPrice } from "@/lib/artworks";
 import { getAvailable, getBySlug } from "@/lib/square";
-import styles from "./piece.module.css";
+import s from "./piece.module.css";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -30,48 +31,59 @@ export default async function Piece({ params }: Props) {
   const art = await getBySlug((await params).slug);
   if (!art) notFound();
   const more = (await getAvailable()).filter((a) => a.slug !== art.slug && a.format === art.format).slice(0, 4);
+  const round = art.size.includes("round");
 
   return (
-    <div className="wrap">
-      <nav className={styles.crumb} aria-label="Breadcrumb">
-        <Link href={art.available ? "/shop" : "/past-work"}>{art.available ? "Shop" : "Past work"}</Link>
-        <span> / </span>
-        {art.title}
-      </nav>
-
-      <div className={styles.layout}>
-        <div className={styles.image} style={art.format === "card" ? { aspectRatio: "4 / 5" } : undefined}>
-          <Image src={art.image} alt={art.title} fill sizes="(max-width: 860px) 100vw, 55vw" priority />
+    <>
+      <div className={s.layout}>
+        <div className={`${s.wall} wall-${art.wall ?? "mustard"}`}>
+          <Flower className={`${s.f1} spin-slow`} size={130} color="var(--paper)" center="var(--rose)" />
+          <Leaf className={s.l1} size={70} rotate={-25} />
+          <nav className={s.crumb} aria-label="Breadcrumb">
+            <Link href={art.available ? "/shop" : "/past-work"}>← {art.available ? "Shop" : "Past work"}</Link>
+          </nav>
+          <div className={`${s.hung} ${art.format === "card" ? s.card : ""} ${round ? s.round : ""}`}>
+            <Image src={art.image} alt={art.title} fill sizes="(max-width: 900px) 80vw, 40vw" priority />
+          </div>
         </div>
 
-        <div>
+        <div className={s.info}>
           {art.series && <div className="eyebrow">The {art.series} series</div>}
-          <h1 className={styles.title}>{art.title}</h1>
+          <h1 className={s.title}>{art.title}</h1>
+          <div className={s.by}>Grace Vieira</div>
 
-          {art.available ? (
-            <>
-              <div className={styles.price}>{formatPrice(art.price)}</div>
-              <div className={styles.one}>{art.format === "card" ? "Hand-painted original card. There is only one." : "Original painting. There is only one."}</div>
-              <AddToCart slug={art.slug} />
-            </>
-          ) : (
-            <div className={styles.sold}>
-              This piece has been collected. <Link href="/shop" className="link">See available work</Link>
-            </div>
-          )}
+          <div className={s.label}>
+            {art.available ? (
+              <>
+                <div className={s.priceRow}>
+                  <span className={s.price}>{formatPrice(art.price)}</span>
+                  <span className={s.one}>One of one</span>
+                </div>
+                <AddToCart slug={art.slug} />
+                <p className={s.small}>
+                  {art.format === "card" ? "Hand-painted original card, not a print." : "Original painting, not a print."}{" "}
+                  Payment is handled securely by Square.
+                </p>
+              </>
+            ) : (
+              <p className={s.sold}>
+                This piece has been collected. <Link href="/shop" className="link">See available work</Link>
+              </p>
+            )}
+          </div>
 
-          <div className={`prose ${styles.story}`}>
+          <div className={`prose ${s.story}`}>
             {art.story.map((p, i) => <p key={i}>{p}</p>)}
           </div>
 
-          <dl className={styles.specs}>
+          <dl className={s.specs}>
             <div><dt>Size</dt><dd>{art.size}</dd></div>
             <div><dt>Medium</dt><dd>{art.medium}</dd></div>
             {art.details?.map((d) => <div key={d}><dt>Detail</dt><dd>{d}</dd></div>)}
           </dl>
 
           {art.available && (
-            <p className={styles.small}>
+            <p className={s.small} style={{ marginTop: 22 }}>
               Questions about this piece? <Link href="/contact" className="link">Get in touch</Link>.
               Shipping details are on the <Link href="/shipping" className="link">shipping page</Link>.
             </p>
@@ -80,11 +92,13 @@ export default async function Piece({ params }: Props) {
       </div>
 
       {more.length > 0 && (
-        <section className="section" style={{ borderTop: "1px solid var(--line)" }}>
-          <h2 style={{ marginBottom: 28 }}>{art.format === "card" ? "More cards" : "More paintings"}</h2>
-          <div className="grid">{more.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
+        <section className="section" style={{ borderTop: "1.5px solid var(--ink)" }}>
+          <div className="wrap">
+            <h2 style={{ marginBottom: 36 }}>{art.format === "card" ? <>More <em>cards</em></> : <>More <em>paintings</em></>}</h2>
+            <div className="grid">{more.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
+          </div>
         </section>
       )}
-    </div>
+    </>
   );
 }

@@ -60,8 +60,8 @@ export function useCart() {
 export function CartButton() {
   const { items, setOpen } = useCart();
   return (
-    <button className="cart-btn" onClick={() => setOpen(true)}>
-      Cart ({items.length})
+    <button className="cart-btn" onClick={() => setOpen(true)} aria-label={`Cart, ${items.length} item${items.length === 1 ? "" : "s"}`}>
+      Cart <span className="count">{items.length}</span>
     </button>
   );
 }
@@ -70,8 +70,8 @@ export function AddToCart({ slug }: { slug: string }) {
   const { items, add } = useCart();
   const inCart = items.includes(slug);
   return (
-    <button className="btn" style={{ width: "100%", padding: 18 }} onClick={() => add(slug)} disabled={inCart}>
-      {inCart ? "In your cart" : "Add to cart"}
+    <button className="btn" style={{ width: "100%", padding: 20, fontSize: 17 }} onClick={() => add(slug)} disabled={inCart}>
+      {inCart ? "In your cart" : <>Add to cart <span className="arrow">→</span></>}
     </button>
   );
 }
