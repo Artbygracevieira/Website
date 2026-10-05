@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import ArtCard from "@/components/ArtCard";
 import Flower, { Leaf } from "@/components/Flower";
-import { AddToCart } from "@/components/Cart";
 import { formatPrice } from "@/lib/artworks";
 import { getAvailable } from "@/lib/square";
 import { events } from "@/lib/site";
@@ -14,7 +13,6 @@ export default async function Home() {
   const all = await getAvailable();
   const paintings = all.filter((a) => a.format === "canvas");
   const cards = all.filter((a) => a.format === "card");
-  const featured = paintings[0] ?? all[0];
   const upcoming = events.filter((e) => !e.past);
   const cardPrice = cards.length ? Math.min(...cards.map((c) => c.price)) : null;
 
@@ -48,38 +46,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* FEATURED PIECE */}
-      {featured && (
-        <section className={`${s.featured} wall-${featured.wall ?? "mustard"}`}>
-          <Flower className={`${s.f2} bob`} size={80} color="var(--paper)" center="var(--rose)" petals={6} />
-          <div className={`wrap ${s.featuredGrid}`}>
-            <Link href={`/shop/${featured.slug}`} className={`${s.hung} ${featured.size.includes("round") ? s.round : ""}`}>
-              <span className={s.wire} aria-hidden="true" />
-              <span className={s.hungImg}>
-                <Image src={featured.image} alt={featured.title} fill sizes="(max-width: 860px) 70vw, 34vw" />
-              </span>
-            </Link>
-            <div>
-              <div className="eyebrow">Featured painting</div>
-              <div className={s.wallLabel}>
-                <div className={s.labelTop}>
-                  <div>
-                    <div className={s.labelTitle}>{featured.title}</div>
-                    <div className={s.labelMeta}>Grace Vieira · {featured.size} · {featured.medium.toLowerCase()}</div>
-                  </div>
-                  <div className={s.labelPrice}>{formatPrice(featured.price)}</div>
-                </div>
-                {featured.story[0] && <p className={s.labelStory}>{featured.story[featured.story.length - 1]}</p>}
-                <AddToCart slug={featured.slug} />
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* PAINTINGS */}
       {paintings.length > 0 && (
-        <section className="section" style={{ paddingTop: 40 }}>
+        <section className="section">
           <div className="wrap">
             <div className={s.head}>
               <div>

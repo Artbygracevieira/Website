@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import ArtCard from "@/components/ArtCard";
-import Flower, { Leaf } from "@/components/Flower";
 import { AddToCart } from "@/components/Cart";
 import { artworks, formatPrice } from "@/lib/artworks";
 import { getAvailable, getBySlug } from "@/lib/square";
@@ -36,9 +35,7 @@ export default async function Piece({ params }: Props) {
   return (
     <>
       <div className={s.layout}>
-        <div className={`${s.wall} wall-${art.wall ?? "mustard"}`}>
-          <Flower className={`${s.f1} spin-slow`} size={130} color="var(--paper)" center="var(--rose)" />
-          <Leaf className={s.l1} size={70} rotate={-25} />
+        <div className={s.wall}>
           <nav className={s.crumb} aria-label="Breadcrumb">
             <Link href={art.available ? "/shop" : "/past-work"}>← {art.available ? "Shop" : "Past work"}</Link>
           </nav>

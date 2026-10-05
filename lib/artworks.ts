@@ -55,6 +55,7 @@ export const artworks: Artwork[] = [
       "Built in Bloom is about becoming who you are through everything you've grown through, and standing confidently in that truth.",
     ],
     image: "/art/built-in-bloom.jpg",
+    localPhoto: true,
     oldPath: "/store/p/floral-crown",
   },
   {
@@ -74,6 +75,7 @@ export const artworks: Artwork[] = [
     ],
     details: ["Ready to hang", "One-of-a-kind original"],
     image: "/art/rooted-in-radiance.jpg",
+    localPhoto: true,
     oldPath: "/store/p/rooted-in-radiance",
   },
   {
@@ -92,6 +94,7 @@ export const artworks: Artwork[] = [
     ],
     details: ["Ready to hang", "One-of-a-kind original"],
     image: "/art/in-full-bloom.jpg",
+    localPhoto: true,
     oldPath: "/store/p/in-full-bloom",
   },
   {
@@ -110,6 +113,7 @@ export const artworks: Artwork[] = [
     ],
     details: ["Ready to hang", "One-of-a-kind original"],
     image: "/art/crowned-in-confidence.jpg",
+    localPhoto: true,
     oldPath: "/store/p/crowned-in-confidence",
   },
   // Hand-painted cards. Website titles here; Square keeps the C codes.

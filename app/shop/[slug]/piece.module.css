@@ -2,19 +2,19 @@
 .wall {
   position: relative; overflow: hidden; min-height: calc(100vh - 120px);
   display: grid; place-items: center; padding: 88px clamp(24px, 5vw, 72px) 64px;
-  border-right: 1.5px solid var(--ink);
+  border-right: 1px solid var(--line); background: #fbf7f1;
 }
 .crumb { position: absolute; top: 24px; left: clamp(20px, 3vw, 40px); font-weight: 600; z-index: 2; }
 .crumb a { background: var(--paper); border: 1.5px solid var(--ink); border-radius: 999px; padding: 7px 14px; font-size: 14px; }
 .hung {
   position: relative; width: min(78%, 520px); aspect-ratio: 1; border-radius: 3px; overflow: hidden;
   box-shadow: 0 40px 50px -24px rgba(26, 20, 17, 0.6), 0 4px 10px rgba(26, 20, 17, 0.25);
-  animation: hang 1s var(--ease) both;
+  animation: hang 0.8s var(--ease) both;
 }
 .hung img { object-fit: cover; }
 .round { border-radius: 50%; }
 .card { aspect-ratio: 4 / 5; width: min(70%, 440px); }
-@keyframes hang { from { opacity: 0; transform: translateY(-24px) rotate(-2deg); } }
+@keyframes hang { from { opacity: 0; transform: translateY(-16px); } }
 .f1 { position: absolute; right: -40px; bottom: -40px; }
 .l1 { position: absolute; left: 24px; bottom: 90px; }
 
