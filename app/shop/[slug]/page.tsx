@@ -4,17 +4,20 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ArtCard from "@/components/ArtCard";
 import { AddToCart } from "@/components/Cart";
-import { artworks, available, bySlug, formatPrice } from "@/lib/artworks";
+import { artworks, formatPrice } from "@/lib/artworks";
+import { getAvailable, getBySlug } from "@/lib/square";
 import styles from "./piece.module.css";
 
 type Props = { params: Promise<{ slug: string }> };
+
+export const revalidate = 300;
 
 export function generateStaticParams() {
   return artworks.map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const art = bySlug((await params).slug);
+  const art = await getBySlug((await params).slug);
   if (!art) return {};
   return {
     title: art.title,
@@ -24,9 +27,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Piece({ params }: Props) {
-  const art = bySlug((await params).slug);
+  const art = await getBySlug((await params).slug);
   if (!art) notFound();
-  const more = available().filter((a) => a.slug !== art.slug).slice(0, 4);
+  const more = (await getAvailable()).filter((a) => a.slug !== art.slug && a.format === art.format).slice(0, 4);
 
   return (
     <div className="wrap">
@@ -37,7 +40,7 @@ export default async function Piece({ params }: Props) {
       </nav>
 
       <div className={styles.layout}>
-        <div className={styles.image}>
+        <div className={styles.image} style={art.format === "card" ? { aspectRatio: "4 / 5" } : undefined}>
           <Image src={art.image} alt={art.title} fill sizes="(max-width: 860px) 100vw, 55vw" priority />
         </div>
 
@@ -48,12 +51,12 @@ export default async function Piece({ params }: Props) {
           {art.available ? (
             <>
               <div className={styles.price}>{formatPrice(art.price)}</div>
-              <div className={styles.one}>Original painting. There is only one.</div>
+              <div className={styles.one}>{art.format === "card" ? "Hand-painted original card. There is only one." : "Original painting. There is only one."}</div>
               <AddToCart slug={art.slug} />
             </>
           ) : (
             <div className={styles.sold}>
-              This painting has been collected. <Link href="/shop" className="link">See available work</Link>
+              This piece has been collected. <Link href="/shop" className="link">See available work</Link>
             </div>
           )}
 
@@ -78,7 +81,7 @@ export default async function Piece({ params }: Props) {
 
       {more.length > 0 && (
         <section className="section" style={{ borderTop: "1px solid var(--line)" }}>
-          <h2 style={{ marginBottom: 28 }}>More available work</h2>
+          <h2 style={{ marginBottom: 28 }}>{art.format === "card" ? "More cards" : "More paintings"}</h2>
           <div className="grid">{more.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
         </section>
       )}

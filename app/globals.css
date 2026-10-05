@@ -149,3 +149,5 @@ h3 { font-size: clamp(24px, 2.6vw, 32px); }
   .card .price { order: 3; margin-top: 2px; }
 }
 .link { white-space: nowrap; }
+
+.card.fmt-card .ph { aspect-ratio: 4 / 5; }

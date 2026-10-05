@@ -1,11 +1,16 @@
-// Every piece Grace has listed online, with her own descriptions.
+// The pieces shown on the website.
 //
-// This file is the stand-in for Square. When Square is connected, the same
-// shape gets filled from the Square Catalog + Inventory APIs (see lib/square.ts)
-// and this list can be deleted.
+// Each entry links to an item in Grace's Square catalog by its code (C236, R4 ...).
+// Square stays the source of truth for PRICE and whether a piece is still AVAILABLE:
+// the site reads both from Square (see lib/square.ts). Everything else here
+// (website title, story, size) is what visitors see. Square keeps the short codes
+// so Grace can find pieces fast at the booth.
 //
-// To add a piece by hand for now: copy one entry, give it a new slug,
-// drop the photo in /public/art/<slug>.jpg, and set available: true.
+// The price and available values below are only a fallback for when Square
+// can't be reached.
+//
+// To add a piece: copy an entry, give it a website title and slug, put the
+// Square code and IDs in, and save a photo as /public/art/<slug>.jpg as a backup.
 
 export type Format = "canvas" | "card";
 
@@ -23,13 +28,16 @@ export type Artwork = {
   image: string;
   // Squarespace URL this piece used to live at, so old links keep working
   oldPath?: string;
+  // Link to Square. Leave out for pieces that only ever sold on Squarespace.
+  square?: { code: string; itemId: string; variationId: string };
 };
 
 export const artworks: Artwork[] = [
   {
     slug: "built-in-bloom",
     title: "Built in Bloom",
-    price: 500,
+    price: 400,
+    square: { code: "R4", itemId: "MKRYX4DVPALOJIJ4N4XACUJU", variationId: "ZXLQDWQMEGL7QYIYBM5Q56AZ" },
     available: true,
     format: "canvas",
     size: '16" round',
@@ -45,7 +53,8 @@ export const artworks: Artwork[] = [
   {
     slug: "rooted-in-radiance",
     title: "Rooted in Radiance",
-    price: 350,
+    price: 250,
+    square: { code: "S5", itemId: "ZRRBWOUYABT4RK7YJTUOGHJH", variationId: "DP7LWCFBSLDTDO63PLCAIUND" },
     available: true,
     format: "canvas",
     size: "12 x 12 in",
@@ -62,7 +71,8 @@ export const artworks: Artwork[] = [
   {
     slug: "in-full-bloom",
     title: "In Full Bloom",
-    price: 350,
+    price: 250,
+    square: { code: "S6", itemId: "6Y4F5RHKXBB5VHCJLIJRQJCJ", variationId: "VEZ2UP47K7747AQWEV3QTHXW" },
     available: true,
     format: "canvas",
     size: "12 x 12 in",
@@ -78,7 +88,8 @@ export const artworks: Artwork[] = [
   {
     slug: "crowned-in-confidence",
     title: "Crowned in Confidence",
-    price: 350,
+    price: 250,
+    square: { code: "S2", itemId: "TF7I2BC2QUDRK2AF6QYB4GBM", variationId: "K6FBBOTBSTJQK6HEL6GCJLMM" },
     available: true,
     format: "canvas",
     size: "12 x 12 in",
@@ -91,10 +102,192 @@ export const artworks: Artwork[] = [
     image: "/art/crowned-in-confidence.jpg",
     oldPath: "/store/p/crowned-in-confidence",
   },
+  // Hand-painted cards. Website titles here; Square keeps the C codes.
+  {
+    slug: "covered-in-color",
+    title: "Covered in Color",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A faceless figure with flowers growing over her head and shoulders, set against bright yellow and white. Red blooms reach in from the top corner."],
+    image: "/art/covered-in-color.jpg",
+    square: { code: "C236", itemId: "CVWKFWVGOBNDLDLD6O6OR26C", variationId: "CTHJG5BLH5VO3YUOUUMBQGAM" },
+  },
+  {
+    slug: "halo",
+    title: "Halo",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A woman with long braids and a thin silver halo. Her blue dress is filled with wildflowers and berry branches, on a warm yellow background."],
+    image: "/art/halo.jpg",
+    square: { code: "C207", itemId: "GVU3VXXXFDI4ECPSXOKQMRES", variationId: "4OHP22EUADKMHL2EOZ3QRGYC" },
+  },
+  {
+    slug: "one-blue-flower",
+    title: "One Blue Flower",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A woman with a long braid over her shoulder and a single blue flower in her hair, set against gold. A second blue flower sits at her neckline."],
+    image: "/art/one-blue-flower.jpg",
+    square: { code: "C208", itemId: "MMNN5LPFWCQJL53THNQT2BJK", variationId: "TQESZIFKAY3XCLFS4G3FJ2ZK" },
+  },
+  {
+    slug: "garden-wrap",
+    title: "Garden Wrap",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A woman in a green headwrap full of leaves and small flowers, against a deep mauve background."],
+    image: "/art/garden-wrap.jpg",
+    square: { code: "C209", itemId: "MWYOZBSOTPSI6MQACMN4UGFO", variationId: "NEDMCFJOB53JCQMFWN23SM7O" },
+  },
+  {
+    slug: "flower-crown",
+    title: "Flower Crown",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A woman in an orange hat ringed with small flowers, with a matching flower collar, under a clear blue sky."],
+    image: "/art/flower-crown.jpg",
+    square: { code: "C234", itemId: "ISGN4YS4B7IZ7VDO6LEZEZ4P", variationId: "2QEHZM23NSJO26N77UAG7ZHC" },
+  },
+  {
+    slug: "soft-curls",
+    title: "Soft Curls",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A woman with full dark curls and silver hoops, in a teal top with a white swirl at the collar, on coral pink."],
+    image: "/art/soft-curls.jpg",
+    square: { code: "C191", itemId: "262FJBQLT7NP534CJEEGI3BI", variationId: "VPSNASXCXAASHDLEUZWAFGRY" },
+  },
+  {
+    slug: "yellow-bucket-hat",
+    title: "Yellow Bucket Hat",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A woman in a bright yellow bucket hat and a layered silver necklace, on a coral background."],
+    image: "/art/yellow-bucket-hat.jpg",
+    square: { code: "C192", itemId: "HIONIQVZE5PRXX2PYD7DDSXF", variationId: "37E54P6S45LSF4HPQWSMM2NL" },
+  },
+  {
+    slug: "blue-pattern",
+    title: "Blue Pattern",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A woman with gold earrings and a blue top covered in white squiggles, set against soft gray."],
+    image: "/art/blue-pattern.jpg",
+    square: { code: "C196", itemId: "TPNQ5OK5FFTUIPMC2LZYQMWF", variationId: "74LGRMHGFHMT6APHTUZHYNPA" },
+  },
+  {
+    slug: "sun-at-her-back",
+    title: "Sun at Her Back",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A small figure in a blue dress standing in front of a big orange sun."],
+    image: "/art/sun-at-her-back.jpg",
+    square: { code: "C136", itemId: "CT4THLG7OFM627W2ZFO5XD4Y", variationId: "FNHLCNM5RLUFPTWY4CI3GW76" },
+  },
+  {
+    slug: "yellow-dress",
+    title: "Yellow Dress",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A girl in a yellow dress standing in a loose wash of blue, with an orange hanging overhead and pink blooms beside her."],
+    image: "/art/yellow-dress.jpg",
+    square: { code: "C144", itemId: "DDPCNODVD62PQKQTSAJMECQA", variationId: "5VYFNGXCVIVFB355P26QU4TJ" },
+  },
+  {
+    slug: "pinwheel",
+    title: "Pinwheel",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["Watercolor petals in blue, teal, red and green spinning out from the center like a pinwheel."],
+    image: "/art/pinwheel.jpg",
+    square: { code: "C14", itemId: "EOO7TUUYOUBGONOCUUB6S2CH", variationId: "SFOSWOOPRLXIUSYPZYHHQAAD" },
+  },
+  {
+    slug: "brown-vase",
+    title: "Brown Vase",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A bouquet of red, pink and purple flowers in a round brown vase, on kraft paper with soft white lines."],
+    image: "/art/brown-vase.jpg",
+    square: { code: "C26", itemId: "AKPQ3GY35NIGWQPNWMTTTYJV", variationId: "OYPM5JLU3SGEZXKTACRN52GN" },
+  },
+  {
+    slug: "wildflower-field",
+    title: "Wildflower Field",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A watercolor field of wildflowers in purple, orange and red, with a soft glow of light behind them."],
+    image: "/art/wildflower-field.jpg",
+    square: { code: "C27", itemId: "TLNWISBX6B5VJVRELPOID5XR", variationId: "QX776ABTDPCCRZ4PPJQTYMGQ" },
+  },
+  {
+    slug: "all-the-pieces",
+    title: "All the Pieces",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A face built from blocks of blue, orange and pink, with a green neck and a yellow flower at the shoulder, on gray."],
+    image: "/art/all-the-pieces.jpg",
+    square: { code: "C175", itemId: "77B2FRW3TMWK64HWR3TEURTF", variationId: "FVJZ776QNTSWUPVAPCPWRE6O" },
+  },
+  {
+    slug: "blue-gown",
+    title: "Blue Gown",
+    price: 30,
+    available: true,
+    format: "card",
+    size: "5 x 7 in card",
+    medium: "Hand-painted on paper",
+    story: ["A woman in a long blue gown standing among tall orange flowers, on dusty pink."],
+    image: "/art/blue-gown.jpg",
+    square: { code: "C95", itemId: "U25B37QJ7W2K3AJEGMUSL3DJ", variationId: "RWT2UCOTNZUKF7NLOWCLKGTM" },
+  },
   {
     slug: "flourish",
     title: "Flourish",
-    price: 350,
+    price: 250,
+    square: { code: "S4", itemId: "4R4NB3MAMTR62K7NRVFZWMH7", variationId: "MVWTXZJAT6L6QVS5YD3RJB3L" },
     available: false,
     format: "canvas",
     size: "12 x 12 in",
@@ -110,7 +303,8 @@ export const artworks: Artwork[] = [
   {
     slug: "its-my-time",
     title: "It's My Time",
-    price: 500,
+    price: 400,
+    square: { code: "R1", itemId: "PX4GZOJTCEKOPA64P352F5SS", variationId: "63Z4RZZJ4SUTHUYV2ILWYJ6S" },
     available: false,
     format: "canvas",
     size: '16" round',
@@ -125,7 +319,7 @@ export const artworks: Artwork[] = [
   {
     slug: "surviving-corporate-america",
     title: "Surviving Corporate America",
-    price: 500,
+    price: 200,
     available: false,
     format: "canvas",
     size: '16" round',
@@ -139,7 +333,8 @@ export const artworks: Artwork[] = [
   {
     slug: "fully-seen",
     title: "Fully Seen",
-    price: 500,
+    price: 400,
+    square: { code: "R2", itemId: "QQ6ADGLYEJLS5OCTIGBLYTPN", variationId: "OICSMFLXTF6RZNLOQMHBXFLB" },
     available: false,
     format: "canvas",
     size: '16" round',

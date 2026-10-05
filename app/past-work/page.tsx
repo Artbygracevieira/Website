@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import ArtCard from "@/components/ArtCard";
-import { collected } from "@/lib/artworks";
+import { getCollected } from "@/lib/square";
 
 export const metadata: Metadata = {
   title: "Past work",
   description: "Original paintings by Grace Vieira that have already been collected.",
 };
 
-export default function PastWork() {
+export const revalidate = 300;
+
+export default async function PastWork() {
+  const pieces = await getCollected();
   return (
     <div className="wrap" style={{ paddingBottom: 96 }}>
       <div style={{ padding: "56px 0 36px", borderBottom: "1px solid var(--line)", marginBottom: 36 }}>
@@ -17,7 +20,7 @@ export default function PastWork() {
           These originals already have homes. They stay here so you can see the work over time.
         </p>
       </div>
-      <div className="grid">{collected().map((a) => <ArtCard key={a.slug} art={a} />)}</div>
+      <div className="grid">{pieces.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
     </div>
   );
 }

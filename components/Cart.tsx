@@ -2,12 +2,14 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
-import { bySlug, formatPrice } from "@/lib/artworks";
+import { type Artwork, formatPrice } from "@/lib/artworks";
 
 // Every piece is one of one, so the cart is just a list of slugs (no quantities).
 
 type CartCtx = {
   items: string[];
+  pieces: Artwork[];
+  clear: () => void;
   open: boolean;
   add: (slug: string) => void;
   remove: (slug: string) => void;
@@ -17,8 +19,10 @@ type CartCtx = {
 const Ctx = createContext<CartCtx | null>(null);
 const KEY = "abgv-cart";
 
-export function CartProvider({ children }: { children: ReactNode }) {
+// `pieces` comes from the server with live Square prices and availability.
+export function CartProvider({ children, pieces }: { children: ReactNode; pieces: Artwork[] }) {
   const [items, setItems] = useState<string[]>([]);
+  const bySlug = (slug: string) => pieces.find((p) => p.slug === slug);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -37,9 +41,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setOpen(true);
   };
   const remove = (slug: string) => setItems((cur) => cur.filter((s) => s !== slug));
+  const clear = () => setItems([]);
 
   return (
-    <Ctx.Provider value={{ items, open, add, remove, setOpen }}>
+    <Ctx.Provider value={{ items, pieces, clear, open, add, remove, setOpen }}>
       {children}
       <CartDrawer />
     </Ctx.Provider>
@@ -72,12 +77,12 @@ export function AddToCart({ slug }: { slug: string }) {
 }
 
 function CartDrawer() {
-  const { items, open, remove, setOpen } = useCart();
+  const { items, pieces: all, open, remove, setOpen } = useCart();
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
   if (!open) return null;
 
-  const pieces = items.map((s) => bySlug(s)).filter(Boolean);
+  const pieces = items.map((s) => all.find((p) => p.slug === s)).filter(Boolean);
   const subtotal = pieces.reduce((n, a) => n + (a?.price ?? 0), 0);
 
   async function checkout() {
@@ -90,6 +95,7 @@ function CartDrawer() {
         body: JSON.stringify({ items }),
       });
       const data = await res.json();
+      if (data.gone) data.gone.forEach((s: string) => remove(s));
       if (data.url) window.location.href = data.url;
       else setMsg(data.message || "Checkout isn't available yet.");
     } catch {

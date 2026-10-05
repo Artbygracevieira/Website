@@ -2,24 +2,26 @@
 
 The website for [artbygracevieira.com](https://artbygracevieira.com): original paintings by Grace Vieira, Brooklyn, NY.
 
-Built with Next.js. Hosting (Vercel) and payments (Square) get connected in the next phase.
+Built with Next.js. Prices, photos, availability and checkout come from Grace's Square account. Hosting on Vercel is the next step.
 
 ## Run it on your computer
 
 You need [Node.js](https://nodejs.org) 20 or newer.
 
 ```bash
+cp .env.example .env.local   # then paste the Square access token into .env.local
 npm install
 npm run dev
 ```
 
-Then open http://localhost:3000.
+Then open http://localhost:3000. Without a token the site still runs, using the backup prices and photos in `lib/artworks.ts`, and checkout stays off.
 
 ## Where things live
 
 | What | Where |
 | --- | --- |
-| Every painting (title, price, size, story, sold or not) | `lib/artworks.ts` |
+| Which pieces are on the site, their website titles and stories, and their Square codes | `lib/artworks.ts` |
+| Square connection (prices, photos, sold or not, checkout) | `lib/square.ts` |
 | Painting photos | `public/art/<slug>.jpg` |
 | Site name, Instagram, email, events | `lib/site.ts` |
 | Event and booth photos | `public/photos/` |
@@ -41,15 +43,17 @@ Then open http://localhost:3000.
 
 ## Common changes
 
-**A painting sold.** In `lib/artworks.ts`, set `available: false`. It moves from the shop to Past Work. (Once Square is connected this happens on its own.)
+**A piece sold.** Nothing to do. Ring it up in Square as usual (C236, R4 and so on). Within about 5 minutes it leaves the shop and moves to Past Work. Marking an item "Sold out" in Square, or putting it in the "Sold out" category, does the same.
 
-**A new painting.** Copy an entry in `lib/artworks.ts`, give it a new `slug` (lowercase, dashes), and save the photo as `public/art/<slug>.jpg`. Square photos work best: straight on, cropped to the canvas, good daylight.
+**Change a price or photo.** Change it in Square. The site picks it up within about 5 minutes.
+
+**Put a new piece on the site.** In `lib/artworks.ts`, copy an entry and fill in the website title, slug, story, size, and its Square `code`, `itemId` and `variationId`. Square keeps its short code; visitors only see the website title. Save a backup photo as `public/art/<slug>.jpg`.
 
 **A new event.** Add it to the top of `events` in `lib/site.ts` with a `date` like `"2026-11-14"`. Set `past: true` after it happens.
 
 ## Writing on the site
 
-All painting descriptions and the About page are Grace's own words from her original site. Keep it that way:
+The canvas descriptions and the About page are Grace's own words from her original site. The card titles and descriptions are new and should get Grace's OK. Either way:
 
 - Write the way Grace talks about her work. Plain, warm, specific.
 - Describe what's in the painting (colors, flowers, the figure) and what it means to her.
@@ -59,7 +63,8 @@ All painting descriptions and the About page are Grace's own words from her orig
 
 ## Still to do
 
-- [ ] Connect Square (catalog, inventory, hosted checkout). Notes are in `lib/square.ts`.
+- [ ] Place one real test order through checkout, then refund it in Square.
+- [ ] Add a shipping fee in `createCheckoutLink()` (`lib/square.ts`) once the shipping policy is set.
 - [ ] Connect the repo to Vercel and point the domain at it.
 - [ ] Hook the email signup (`components/JoinList.tsx`) to the email tool Grace picks.
 - [ ] Hook the contact form (`app/api/contact/route.ts`) to Grace's inbox, and add her email in `lib/site.ts`.
@@ -67,12 +72,10 @@ All painting descriptions and the About page are Grace's own words from her orig
 - [ ] Re-photograph available paintings, cropped to the canvas.
 - [ ] Add upcoming events.
 
-## Connecting Square (next phase)
+## How Square is connected
 
-1. Make a Square developer app at [developer.squareup.com](https://developer.squareup.com) using Grace's Square account.
-2. Add each painting in Square as an item with one variation, stock count 1.
-3. Add `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID` and `SQUARE_ENVIRONMENT` in Vercel (see `.env.example`).
-4. Fill in `getArtworks()` and `createCheckoutLink()` in `lib/square.ts`.
-5. Add a Square webhook for inventory changes so a painting sold at a market leaves the shop right away.
-
-Once this is done, Grace only manages paintings in Square. The website and the market booth share one inventory.
+- Every piece on the site points at an item in Square by its code (C236, S5, R4...). Square keeps those codes for the booth; the website shows its own titles.
+- **Price and photo** come from Square.
+- **Sold or not:** Square isn't tracking stock counts, so the site treats a piece as sold if it shows up in any paid Square order (booth or website), is marked "Sold out", is in the "Sold out" category, or was deleted. Square is checked every 5 minutes, and again right before checkout so nothing can be bought twice.
+- **Checkout** creates a Square-hosted payment page. The order lands in Square with the code and the website title on each line.
+- In Vercel, add these environment variables: `SQUARE_ACCESS_TOKEN` (secret), `SQUARE_LOCATION_ID` = `L0FZND5FRN6MW`, `SQUARE_ENVIRONMENT` = `production`. Never commit the token.

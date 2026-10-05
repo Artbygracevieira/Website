@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import JoinList from "@/components/JoinList";
 import { CartProvider } from "@/components/Cart";
 import { site } from "@/lib/site";
+import { getArtworks } from "@/lib/square";
 
 const display = Cormorant_Garamond({ subsets: ["latin"], weight: ["500", "600"], style: ["normal", "italic"], variable: "--font-display" });
 const body = DM_Sans({ subsets: ["latin"], variable: "--font-body" });
@@ -17,11 +18,12 @@ export const metadata: Metadata = {
   openGraph: { siteName: site.name, type: "website", images: ["/art/built-in-bloom.jpg"] },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const pieces = await getArtworks();
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>
-        <CartProvider>
+        <CartProvider pieces={pieces}>
           <Header />
           <main>{children}</main>
           <JoinList />

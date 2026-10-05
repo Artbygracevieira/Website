@@ -1,12 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import ArtCard from "@/components/ArtCard";
-import { available } from "@/lib/artworks";
+import { getAvailable } from "@/lib/square";
 import { events } from "@/lib/site";
 import styles from "./home.module.css";
 
-export default function Home() {
-  const pieces = available();
+export const revalidate = 300;
+
+export default async function Home() {
+  const all = await getAvailable();
+  const pieces = [...all.filter((a) => a.format === "canvas"), ...all.filter((a) => a.format === "card")];
   const upcoming = events.filter((e) => !e.past);
 
   return (
