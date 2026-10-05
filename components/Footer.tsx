@@ -29,6 +29,7 @@ export default function Footer() {
               <li><Link href="/about">About Grace</Link></li>
               <li><Link href="/contact">Contact</Link></li>
               <li><Link href="/shipping">Shipping and returns</Link></li>
+              <li><Link href="/privacy">Privacy policy</Link></li>
             </ul>
           </div>
         </div>

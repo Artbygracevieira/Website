@@ -239,3 +239,28 @@ h1 em, h2 em, h3 em, .display em, .footer .big em, .wordmark em { font-family: v
   .join .deco { display: none; }
   .page-head .deco { opacity: 0.55; }
 }
+
+/* policy pages (shipping, privacy) */
+.policy { max-width: 720px; }
+.policy section { padding: 28px 0; border-top: 1px solid var(--line); }
+.policy section:first-of-type { border-top: 0; padding-top: 0; }
+.policy h2 { font-size: clamp(26px, 3vw, 34px); margin-bottom: 12px; }
+.policy p, .policy li { font-size: 18px; line-height: 1.6; color: var(--ink-soft); }
+.policy p + p { margin-top: 12px; }
+.policy ul { padding-left: 20px; display: grid; gap: 10px; margin-bottom: 12px; }
+.policy strong { color: var(--ink); }
+.policy .updated { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+/* about page story */
+.story-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+.story-grid .pull { font-family: var(--font-display), serif; font-size: clamp(34px, 4vw, 54px); line-height: 1.02; letter-spacing: -0.02em; position: sticky; top: 110px; }
+.story-grid .pull em { font-family: var(--font-accent), serif; color: var(--terracotta); }
+.story-grid .body p { font-size: 19px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 1.1em; }
+.story-grid .body p:first-child { font-size: clamp(21px, 2vw, 24px); line-height: 1.5; color: var(--ink); }
+@media (max-width: 860px) {
+  .story-grid { grid-template-columns: 1fr; }
+  .story-grid .pull { position: static; }
+}
+
+/* keep side margins when a block is both .wrap and .section */
+.wrap.section { padding-left: var(--px); padding-right: var(--px); }

@@ -1,31 +1,49 @@
 import type { Metadata } from "next";
-
+import Link from "next/link";
 import PageHead from "@/components/PageHead";
 
 export const metadata: Metadata = {
   title: "Shipping and returns",
+  description: "Shipping within the US. Paintings ship within one week. All sales are final.",
 };
-
-// TODO(Grace): replace every [bracketed] line with your real policy before launch.
 
 export default function Shipping() {
   return (
     <>
-    <PageHead wall="paper" eyebrow="Info" title={<>Shipping <em>and returns</em></>} />
-    <div className="wrap section prose" style={{ maxWidth: 760 }}>
+      <PageHead wall="paper" eyebrow="Info" title={<>Shipping <em>and returns</em></>} />
+      <div className="wrap section">
+        <div className="policy">
+          <section>
+            <h2>Where we ship</h2>
+            <p>We ship within the United States only.</p>
+          </section>
 
-      <h2 style={{ fontSize: 30, margin: "8px 0 12px" }}>How paintings ship</h2>
-      <p>[How you pack originals, which carrier you use, and how long it takes to ship after an order.]</p>
+          <section>
+            <h2>When it ships</h2>
+            <p>
+              Paintings ship within one week of purchase. Each one is packed by hand,
+              and you&apos;ll get an email from Square when your order is placed.
+            </p>
+          </section>
 
-      <h2 style={{ fontSize: 30, margin: "28px 0 12px" }}>Where you ship</h2>
-      <p>[US only, or international too. Local pickup in Brooklyn, if you offer it.]</p>
+          <section>
+            <h2>Returns</h2>
+            <p>
+              All sales are final. Every piece is one of a kind, so we don&apos;t accept returns
+              or exchanges. If you have a question about a piece before you buy it,{" "}
+              <Link href="/contact" className="link">get in touch</Link> and Grace will answer.
+            </p>
+          </section>
 
-      <h2 style={{ fontSize: 30, margin: "28px 0 12px" }}>Returns</h2>
-      <p>[Whether originals can be returned, the time window, and who pays return shipping.]</p>
-
-      <h2 style={{ fontSize: 30, margin: "28px 0 12px" }}>If something arrives damaged</h2>
-      <p>[What the buyer should do and how quickly to contact you.]</p>
-    </div>
+          <section>
+            <h2>If something arrives damaged</h2>
+            <p>
+              Please <Link href="/contact" className="link">contact us</Link> as soon as it arrives,
+              with a photo of the piece and the packaging.
+            </p>
+          </section>
+        </div>
+      </div>
     </>
   );
 }
