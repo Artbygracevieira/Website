@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHead from "@/components/PageHead";
+import { shipping } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Shipping and returns",
@@ -16,6 +17,15 @@ export default function Shipping() {
           <section>
             <h2>Where we ship</h2>
             <p>We ship within the United States only.</p>
+          </section>
+
+          <section>
+            <h2>What shipping costs</h2>
+            <p>
+              Cards ship for ${shipping.card}, paintings on paper for ${shipping.paper}, and canvases for ${shipping.canvas}.
+              You pay one shipping charge per order, at the rate of the largest piece in your cart.
+              NY sales tax is added at checkout.
+            </p>
           </section>
 
           <section>

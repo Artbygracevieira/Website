@@ -13,7 +13,7 @@ type Props = { params: Promise<{ slug: string }> };
 export const revalidate = 300;
 
 export function generateStaticParams() {
-  return artworks.map((a) => ({ slug: a.slug }));
+  return artworks.filter((a) => !a.draft).map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -39,7 +39,7 @@ export default async function Piece({ params }: Props) {
           <nav className={s.crumb} aria-label="Breadcrumb">
             <Link href={art.available ? "/shop" : "/past-work"}>← {art.available ? "Shop" : "Past work"}</Link>
           </nav>
-          <div className={`${s.hung} ${art.format === "card" ? s.card : ""} ${round ? s.round : ""}`}>
+          <div className={`${s.hung} ${art.format !== "canvas" ? s.card : ""} ${round ? s.round : ""}`}>
             <Image src={art.image} alt={art.title} fill sizes="(max-width: 900px) 80vw, 40vw" priority />
           </div>
         </div>
@@ -91,7 +91,7 @@ export default async function Piece({ params }: Props) {
       {more.length > 0 && (
         <section className="section" style={{ borderTop: "1.5px solid var(--ink)" }}>
           <div className="wrap">
-            <h2 style={{ marginBottom: 36 }}>{art.format === "card" ? <>More <em>cards</em></> : <>More <em>paintings</em></>}</h2>
+            <h2 style={{ marginBottom: 36 }}>{art.format === "card" ? <>More <em>cards</em></> : art.format === "paper" ? <>More <em>paintings on paper</em></> : <>More <em>paintings</em></>}</h2>
             <div className="grid">{more.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
           </div>
         </section>

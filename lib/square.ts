@@ -19,7 +19,31 @@
 //   SQUARE_ENVIRONMENT    "production" or "sandbox"
 
 import "server-only";
-import { artworks as local, type Artwork } from "./artworks";
+import { artworks as all, type Artwork } from "./artworks";
+import { maxCardsOnSite, shipping } from "./site";
+
+// Drafts (not yet linked to Square) stay off the site.
+const local = all.filter((a) => !a.draft);
+
+/**
+ * Keeps at most `maxCardsOnSite` available cards on the site, newest first
+ * (newest = lowest in lib/artworks.ts). Cards over the limit are left out
+ * completely until a spot opens. Sold cards still show on Past Work.
+ */
+function limitCards(list: Artwork[]): Artwork[] {
+  const order = new Map(all.map((a, i) => [a.slug, i]));
+  const showing = new Set(
+    list
+      .filter((a) => a.format === "card" && a.available)
+      .sort((a, b) => order.get(b.slug)! - order.get(a.slug)!)
+      .slice(0, maxCardsOnSite)
+      .map((a) => a.slug)
+  );
+  const kept = list.filter((a) => a.format !== "card" || !a.available || showing.has(a.slug));
+  // Newest cards first everywhere they are listed.
+  const cards = kept.filter((a) => a.format === "card").sort((a, b) => order.get(b.slug)! - order.get(a.slug)!);
+  return [...kept.filter((a) => a.format !== "card"), ...cards];
+}
 
 const SQUARE_VERSION = "2025-10-16";
 const SOLD_OUT_CATEGORY = "Sold out";
@@ -137,12 +161,12 @@ async function load(fresh = false): Promise<Artwork[]> {
 
 /** All website pieces with live Square data. Falls back to lib/artworks.ts if Square is unreachable. */
 export async function getArtworks(): Promise<Artwork[]> {
-  if (!squareConnected()) return local;
+  if (!squareConnected()) return limitCards(local);
   try {
-    return await load();
+    return limitCards(await load());
   } catch (err) {
     console.error("Square unavailable, using local data:", err);
-    return local;
+    return limitCards(local);
   }
 }
 
@@ -158,12 +182,22 @@ export async function getBySlug(slug: string) {
 
 /** Checks Square with no cache, so a piece sold minutes ago can't be bought twice. */
 export async function stillAvailable(slugs: string[]): Promise<Artwork[]> {
-  const fresh = await load(true);
+  const fresh = limitCards(await load(true));
   return fresh.filter((a) => slugs.includes(a.slug) && a.available && a.square);
 }
 
-/** Creates a Square-hosted checkout page for these pieces and returns its URL. */
+/** Shipping for an order: the highest rate among the pieces, charged once. */
+export function shippingFor(pieces: Artwork[]): number {
+  return pieces.reduce((n, p) => Math.max(n, shipping[p.format] ?? shipping.canvas), 0);
+}
+
+/**
+ * Creates a Square-hosted checkout page for these pieces and returns its URL.
+ * Square adds sales tax and any automatic discount (like the card deal) on its own,
+ * using the tax and discounts set up in the Square dashboard.
+ */
 export async function createCheckoutLink(pieces: Artwork[], siteUrl: string): Promise<string> {
+  const ship = shippingFor(pieces);
   const data = await square<{ payment_link: { url: string } }>(
     "/v2/online-checkout/payment-links",
     {
@@ -175,12 +209,14 @@ export async function createCheckoutLink(pieces: Artwork[], siteUrl: string): Pr
           quantity: "1",
           note: p.title, // website title, so Grace sees both the code and the name
         })),
+        pricing_options: { auto_apply_taxes: true, auto_apply_discounts: true },
       },
       checkout_options: {
         ask_for_shipping_address: true,
         redirect_url: `${siteUrl}/thanks`,
-        // TODO(Grace): add a shipping fee once the shipping policy is set, e.g.
-        // shipping_fee: { name: "Shipping", charge: { amount: 800, currency: "USD" } },
+        ...(ship > 0 && {
+          shipping_fee: { name: "Shipping", charge: { amount: ship * 100, currency: "USD" } },
+        }),
       },
     },
     false

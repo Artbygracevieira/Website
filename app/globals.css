@@ -144,7 +144,7 @@ h1 em, h2 em, h3 em, .display em, .footer .big em, .wordmark em { font-family: v
   box-shadow: 0 14px 22px -12px rgba(26, 20, 17, 0.4), 0 2px 4px rgba(26, 20, 17, 0.15);
   transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
 }
-.card.fmt-card .frame .canvas { width: 80%; aspect-ratio: 4 / 5; }
+.card.fmt-card .frame .canvas, .card.fmt-paper .frame .canvas { width: 80%; aspect-ratio: 4 / 5; }
 .card.is-round .frame .canvas { border-radius: 50%; }
 .card .frame img { object-fit: cover; }
 .card:hover .frame .canvas { transform: translateY(-4px); box-shadow: 0 22px 30px -14px rgba(26, 20, 17, 0.45), 0 2px 4px rgba(26, 20, 17, 0.15); }

@@ -11,7 +11,7 @@ export const revalidate = 300;
 
 export default async function Home() {
   const all = await getAvailable();
-  const paintings = all.filter((a) => a.format === "canvas");
+  const paintings = [...all.filter((a) => a.format === "canvas"), ...all.filter((a) => a.format === "paper")];
   const cards = all.filter((a) => a.format === "card");
   const upcoming = events.filter((e) => !e.past);
   const cardPrice = cards.length ? Math.min(...cards.map((c) => c.price)) : null;

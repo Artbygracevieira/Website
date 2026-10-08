@@ -4,6 +4,7 @@ import ArtCard from "@/components/ArtCard";
 import PageHead from "@/components/PageHead";
 import { formatPrice } from "@/lib/artworks";
 import { getAvailable } from "@/lib/square";
+import { deal } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Shop original paintings and cards",
@@ -15,6 +16,7 @@ export const revalidate = 300;
 export default async function Shop() {
   const pieces = await getAvailable();
   const paintings = pieces.filter((a) => a.format === "canvas");
+  const onPaper = pieces.filter((a) => a.format === "paper");
   const cards = pieces.filter((a) => a.format === "card");
   const cardPrice = cards.length ? Math.min(...cards.map((c) => c.price)) : null;
 
@@ -26,10 +28,11 @@ export default async function Shop() {
         title={<>Available <em>work</em></>}
         lead="Everything here is an original, painted by hand. There is only one of each."
       >
-        {paintings.length > 0 && cards.length > 0 && (
+        {[paintings, onPaper, cards].filter((g) => g.length).length > 1 && (
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <a href="#paintings" className="btn light">Paintings ({paintings.length})</a>
-            <a href="#cards" className="btn light">Cards ({cards.length})</a>
+            {paintings.length > 0 && <a href="#paintings" className="btn light">Paintings ({paintings.length})</a>}
+            {onPaper.length > 0 && <a href="#paper" className="btn light">On paper ({onPaper.length})</a>}
+            {cards.length > 0 && <a href="#cards" className="btn light">Cards ({cards.length})</a>}
           </div>
         )}
       </PageHead>
@@ -49,11 +52,21 @@ export default async function Shop() {
           </section>
         )}
 
+        {onPaper.length > 0 && (
+          <section id="paper" style={{ paddingTop: 96, scrollMarginTop: 100 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 16, flexWrap: "wrap", marginBottom: 36 }}>
+              <h2>Paintings <em>on paper</em></h2>
+              <p style={{ color: "var(--muted)" }}>Originals painted on heavy paper, ready to frame.</p>
+            </div>
+            <div className="grid">{onPaper.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
+          </section>
+        )}
+
         {cards.length > 0 && (
           <section id="cards" style={{ paddingTop: 96, scrollMarginTop: 100 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 16, flexWrap: "wrap", marginBottom: 36 }}>
               <h2>Cards{cardPrice ? <>, <em>{formatPrice(cardPrice)} each</em></> : null}</h2>
-              <p style={{ color: "var(--muted)" }}>Small originals, hand-painted on paper.</p>
+              <p style={{ color: "var(--muted)" }}>Small originals, hand-painted on paper.{deal && <> {deal}</>}</p>
             </div>
             <div className="grid">{cards.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
           </section>

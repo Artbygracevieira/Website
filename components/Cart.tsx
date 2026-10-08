@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { type Artwork, formatPrice } from "@/lib/artworks";
+import { deal, shipping } from "@/lib/site";
 
 // Every piece is one of one, so the cart is just a list of slugs (no quantities).
 
@@ -84,6 +85,7 @@ function CartDrawer() {
 
   const pieces = items.map((s) => all.find((p) => p.slug === s)).filter(Boolean);
   const subtotal = pieces.reduce((n, a) => n + (a?.price ?? 0), 0);
+  const ship = pieces.reduce((n, a) => Math.max(n, a ? shipping[a.format] : 0), 0);
 
   async function checkout() {
     setBusy(true);
@@ -129,8 +131,12 @@ function CartDrawer() {
         <div className="total">
           <div className="row big"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
           <div className="row" style={{ color: "var(--muted)", fontSize: 14 }}>
-            <span>Shipping and tax</span><span>At checkout</span>
+            <span>Shipping</span><span>{pieces.length ? formatPrice(ship) : "-"}</span>
           </div>
+          <div className="row" style={{ color: "var(--muted)", fontSize: 14 }}>
+            <span>Sales tax</span><span>Added at checkout</span>
+          </div>
+          {deal && <p className="note" style={{ marginTop: 10 }}>{deal}</p>}
           <button className="btn" style={{ width: "100%", marginTop: 16, padding: 18 }} onClick={checkout} disabled={busy || pieces.length === 0}>
             {busy ? "One moment..." : "Check out"}
           </button>

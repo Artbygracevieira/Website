@@ -1,13 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import Flower, { Leaf } from "./Flower";
 
-// TODO: connect to the email tool Grace picks (Square Marketing, Kit or Mailchimp).
-// Right now the form only shows a thank-you message and does not save the address.
+// Signups are saved to Grace's Google Sheet through /api/signup.
 
 export default function JoinList() {
-  const [done, setDone] = useState(false);
+  const [state, setState] = useState<"idle" | "busy" | "done">("idle");
+  const [msg, setMsg] = useState("");
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    setState("busy");
+    setMsg("");
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.get("email"), website: form.get("website") }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) return setState("done");
+      setMsg(data.message || "Something went wrong. Please try again.");
+    } catch {
+      setMsg("Something went wrong. Please try again.");
+    }
+    setState("idle");
+  }
+
   return (
     <section className="join wall-pink" id="join">
       <Flower className="deco spin-slow" size={180} color="var(--rose)" center="var(--mustard)" style={{ left: "-40px", top: "30px" }} />
@@ -18,15 +39,19 @@ export default function JoinList() {
         <div className="eyebrow">The list</div>
         <h2>See new work <em>before</em> anyone else</h2>
         <p>Sign up to get first access to each release and a deeper look at my process.</p>
-        {done ? (
+        {state === "done" ? (
           <p className="done" role="status">Thank you. You&apos;re on the list.</p>
         ) : (
-          <form onSubmit={(e) => { e.preventDefault(); setDone(true); }}>
+          <form onSubmit={submit}>
             <label htmlFor="join-email" className="sr-only">Email address</label>
-            <input id="join-email" type="email" required placeholder="Your email" autoComplete="email" />
-            <button className="btn" type="submit">Sign up</button>
+            <input id="join-email" name="email" type="email" required placeholder="Your email" autoComplete="email" />
+            <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999 }} />
+            <button className="btn" type="submit" disabled={state === "busy"}>
+              {state === "busy" ? "Saving..." : "Sign up"}
+            </button>
           </form>
         )}
+        {msg && <p role="alert" style={{ marginTop: 10 }}>{msg}</p>}
       </div>
     </section>
   );

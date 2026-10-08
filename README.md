@@ -50,6 +50,8 @@ Then open http://localhost:3000. Without a token the site still runs, using the 
 
 **Put a new piece on the site.** In `lib/artworks.ts`, copy an entry and fill in the website title, slug, story, size, and its Square `code`, `itemId` and `variationId`. Square keeps its short code; visitors only see the website title. Save a backup photo as `public/art/<slug>.jpg`.
 
+**How many cards show.** The site shows up to 20 cards at a time (`maxCardsOnSite` in `lib/site.ts`). New cards go at the bottom of the card list in `lib/artworks.ts` and show first. Cards over the limit wait off the site, and step in as others sell. Only cards listed in `lib/artworks.ts` can ever show; the rest of the Square card library stays booth-only.
+
 **A new event.** Add it to the top of `events` in `lib/site.ts` with a `date` like `"2026-11-14"`. Set `past: true` after it happens.
 
 ## Writing on the site
@@ -65,11 +67,15 @@ The canvas descriptions and the About page are Grace's own words from her origin
 ## Still to do
 
 - [ ] Place one real test order through checkout, then refund it in Square.
-- [ ] Add a shipping fee in `createCheckoutLink()` (`lib/square.ts`) once the shipping policy is set.
+- [x] Shipping fee on website orders (rates in `lib/site.ts`).
+- [x] 17 October pieces linked to Square (10 paintings on paper at $100, 7 cards).
+- [ ] Confirm the paintings on paper are 9 x 12 in.
+- [x] Square: NY Sales Tax 8.875% on all items; "Buy 2 cards, get 1 free" automatic discount on the new "Cards" category (all $30 C-code cards).
+- [ ] When adding a new card in Square, put it in the "Cards" category so the deal applies.
 - [ ] Upgrade Vercel to Pro, then point artbygracevieira.com at the Vercel project.
-- [ ] Hook the email signup (`components/JoinList.tsx`) to the email tool Grace picks.
+- [x] Email signup goes to the "Email Sign ups" Google Sheet (Apps Script project "ABGV email signups" on support@artbygracevieira.com).
+- [ ] In Vercel, add `SIGNUP_SHEET_URL` = https://script.google.com/macros/s/AKfycbyJdYM2hKHEK1_xghno-rFQg0UQ6lcdAlCmyLAhiAAt5eCL_S5XhbDRcoEm4SK0wieA/exec
 - [ ] Hook the contact form (`app/api/contact/route.ts`) to Grace's inbox, and add her email in `lib/site.ts`.
-- [ ] Fill in the shipping and returns page with Grace's real policy.
 - [ ] Re-photograph available paintings, cropped to the canvas.
 - [ ] Add upcoming events.
 
@@ -78,5 +84,6 @@ The canvas descriptions and the About page are Grace's own words from her origin
 - Every piece on the site points at an item in Square by its code (C236, S5, R4...). Square keeps those codes for the booth; the website shows its own titles.
 - **Price and photo** come from Square.
 - **Sold or not:** Square isn't tracking stock counts, so the site treats a piece as sold if it shows up in any paid Square order (booth or website), is marked "Sold out", is in the "Sold out" category, or was deleted. Square is checked every 5 minutes, and again right before checkout so nothing can be bought twice.
+- **Tax and deals:** checkout asks Square to apply its own taxes and automatic discounts, so whatever is set up in the Square dashboard applies online too. Shipping comes from `lib/site.ts`.
 - **Checkout** creates a Square-hosted payment page. The order lands in Square with the code and the website title on each line.
-- In Vercel, add these environment variables: `SQUARE_ACCESS_TOKEN` (secret), `SQUARE_LOCATION_ID` = `L0FZND5FRN6MW`, `SQUARE_ENVIRONMENT` = `production`. Never commit the token.
+- In Vercel, add these environment variables: `SQUARE_ACCESS_TOKEN` (secret), `SQUARE_LOCATION_ID` = `L0FZND5FRN6MW`, `SQUARE_ENVIRONMENT` = `production`, plus `SIGNUP_SHEET_URL` (and optional `SIGNUP_SHEET_SECRET`) for email signups. Never commit the token.
