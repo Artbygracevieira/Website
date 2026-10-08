@@ -18,7 +18,12 @@ export default function JoinList() {
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.get("email"), website: form.get("website") }),
+        body: JSON.stringify({
+          firstName: form.get("firstName"),
+          lastName: form.get("lastName"),
+          email: form.get("email"),
+          website: form.get("website"),
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) return setState("done");
@@ -43,12 +48,20 @@ export default function JoinList() {
           <p className="done" role="status">Thank you. You&apos;re on the list.</p>
         ) : (
           <form onSubmit={submit}>
-            <label htmlFor="join-email" className="sr-only">Email address</label>
-            <input id="join-email" name="email" type="email" required placeholder="Your email" autoComplete="email" />
-            <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999 }} />
-            <button className="btn" type="submit" disabled={state === "busy"}>
-              {state === "busy" ? "Saving..." : "Sign up"}
-            </button>
+            <div className="names">
+              <label htmlFor="join-first" className="sr-only">First name</label>
+              <input id="join-first" name="firstName" type="text" required placeholder="First name" autoComplete="given-name" maxLength={60} />
+              <label htmlFor="join-last" className="sr-only">Last name</label>
+              <input id="join-last" name="lastName" type="text" required placeholder="Last name" autoComplete="family-name" maxLength={60} />
+            </div>
+            <div className="pill">
+              <label htmlFor="join-email" className="sr-only">Email address</label>
+              <input id="join-email" name="email" type="email" required placeholder="Your email" autoComplete="email" />
+              <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999 }} />
+              <button className="btn" type="submit" disabled={state === "busy"}>
+                {state === "busy" ? "Saving..." : "Sign up"}
+              </button>
+            </div>
           </form>
         )}
         {msg && <p role="alert" style={{ marginTop: 10 }}>{msg}</p>}

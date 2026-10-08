@@ -57,4 +57,10 @@ export const deal = "Buy 2 cards, get a 3rd free. Applied at checkout.";
 // the next card waiting in line takes its spot automatically.
 export const maxCardsOnSite = 20;
 
+// Where email signups are saved: the "ABGV email signups" Apps Script web app,
+// which adds a row to the "Email Sign ups" Google Sheet. Not a secret.
+// The SIGNUP_SHEET_URL environment variable overrides it if set.
+export const signupSheetUrl =
+  "https://script.google.com/macros/s/AKfycbyJdYM2hKHEK1_xghno-rFQg0UQ6lcdAlCmyLAhiAAt5eCL_S5XhbDRcoEm4SK0wieA/exec";
+
 // Sales tax is set up in Square (Items > Taxes) and added at checkout.

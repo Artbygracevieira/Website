@@ -1,19 +1,18 @@
 // Email signups from artbygracevieira.com land in this Google Sheet.
 //
-// One-time setup (about 3 minutes):
-// 1. Go to script.google.com and make a new project (already done: "ABGV email signups").
-// 2. Paste this whole file in and click Save.
-// 3. Optional but recommended: change SECRET below to any random phrase,
-//    and put the same phrase in Vercel as SIGNUP_SHEET_SECRET.
-// 4. Click Deploy > New deployment. Gear icon > Web app.
-//    Execute as: Me. Who has access: Anyone. Click Deploy and allow access.
-// 5. Copy the Web app URL (ends in /exec). In Vercel, add it as SIGNUP_SHEET_URL.
+// Lives in script.google.com as the project "ABGV email signups" (support@artbygracevieira.com).
+// Deployed as a web app (Execute as: Me, Who has access: Anyone). Its URL is in lib/site.ts.
 //
-// If you ever edit this script, use Deploy > Manage deployments > Edit > New version,
-// so the URL stays the same.
+// To change it: paste this whole file in, Save, then Deploy > Manage deployments >
+// Edit (pencil) > Version: New version > Deploy. The URL stays the same.
+//
+// Optional: set SECRET below to any random phrase and add the same phrase in Vercel
+// as SIGNUP_SHEET_SECRET, so only the website can add rows.
 
 const SHEET_ID = "15b0Vdnw_4oyUxVty0uNbxUyJaTb23zLQNBoDy4jQpuk"; // the "Email Sign ups" sheet
 const SECRET = ""; // same value as SIGNUP_SHEET_SECRET in Vercel, or leave both empty
+
+const HEADERS = ["Signed up", "First name", "Last name", "Email", "Page"];
 
 function doPost(e) {
   try {
@@ -22,18 +21,21 @@ function doPost(e) {
 
     const email = String(body.email || "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return reply({ ok: false, error: "bad email" });
+    const first = String(body.firstName || "").trim().slice(0, 60);
+    const last = String(body.lastName || "").trim().slice(0, 60);
 
     const ss = SpreadsheetApp.openById(SHEET_ID);
     const sheet = ss.getSheets()[0]; // first tab of the sheet
-    if (sheet.getLastRow() === 0) sheet.appendRow(["Signed up", "Email", "Page"]);
 
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
     try {
+      // Keep the header row in place.
+      sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight("bold");
       // Skip people who are already on the list.
-      const last = sheet.getLastRow();
-      const existing = last > 1 ? sheet.getRange(2, 2, last - 1, 1).getValues().flat() : [];
-      if (!existing.includes(email)) sheet.appendRow([new Date(), email, String(body.source || "")]);
+      const lastRow = sheet.getLastRow();
+      const existing = lastRow > 1 ? sheet.getRange(2, 4, lastRow - 1, 1).getValues().flat() : [];
+      if (!existing.includes(email)) sheet.appendRow([new Date(), first, last, email, String(body.source || "")]);
     } finally {
       lock.releaseLock();
     }

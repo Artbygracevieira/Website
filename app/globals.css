@@ -179,8 +179,13 @@ h1 em, h2 em, h3 em, .display em, .footer .big em, .wordmark em { font-family: v
 .join { position: relative; overflow: hidden; padding: clamp(72px, 10vw, 128px) 0; text-align: center; }
 .join h2 { max-width: 760px; margin: 0 auto; }
 .join p { margin: 18px auto 34px; max-width: 520px; font-size: 18px; }
-.join form { display: flex; max-width: 520px; margin: 0 auto; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 999px; padding: 6px; gap: 6px; }
-.join input { flex: 1; min-width: 0; border: 0; padding: 0 20px; font: inherit; background: transparent; color: var(--ink); outline: none; }
+.join form { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.join .names input, .join .pill { width: 100%; box-sizing: border-box; }
+.join .names { display: flex; gap: 10px; }
+.join .names input { flex: 1; min-width: 0; border: 1.5px solid var(--ink); border-radius: 999px; padding: 15px 20px; font: inherit; background: var(--paper); color: var(--ink); outline: none; }
+.join .pill { display: flex; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 999px; padding: 6px; gap: 6px; }
+.join .pill input { flex: 1; min-width: 0; border: 0; padding: 0 20px; font: inherit; background: transparent; color: var(--ink); outline: none; }
+.join .names input:focus-visible, .join .pill:focus-within { outline: 2px solid var(--ink); outline-offset: 2px; }
 .join .done { font-weight: 700; font-size: 20px; }
 .join .deco { position: absolute; pointer-events: none; }
 
@@ -237,6 +242,7 @@ h1 em, h2 em, h3 em, .display em, .footer .big em, .wordmark em { font-family: v
 
 @media (max-width: 720px) {
   .join .deco { display: none; }
+  .join .names { flex-direction: column; }
   .page-head .deco { opacity: 0.55; }
 }
 

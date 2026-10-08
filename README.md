@@ -74,7 +74,7 @@ The canvas descriptions and the About page are Grace's own words from her origin
 - [ ] When adding a new card in Square, put it in the "Cards" category so the deal applies.
 - [ ] Upgrade Vercel to Pro, then point artbygracevieira.com at the Vercel project.
 - [x] Email signup goes to the "Email Sign ups" Google Sheet (Apps Script project "ABGV email signups" on support@artbygracevieira.com).
-- [ ] In Vercel, add `SIGNUP_SHEET_URL` = https://script.google.com/macros/s/AKfycbyJdYM2hKHEK1_xghno-rFQg0UQ6lcdAlCmyLAhiAAt5eCL_S5XhbDRcoEm4SK0wieA/exec
+- [x] Signup form asks for first name, last name and email. The sheet URL is in `lib/site.ts`, so no Vercel setting is needed.
 - [ ] Hook the contact form (`app/api/contact/route.ts`) to Grace's inbox, and add her email in `lib/site.ts`.
 - [ ] Re-photograph available paintings, cropped to the canvas.
 - [ ] Add upcoming events.
