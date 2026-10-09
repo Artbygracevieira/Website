@@ -4,14 +4,13 @@ import ArtCard from "@/components/ArtCard";
 import PageHead from "@/components/PageHead";
 import { formatPrice } from "@/lib/artworks";
 import { getAvailable } from "@/lib/square";
-import { deal } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Shop original paintings and cards",
   description: "Original paintings and hand-painted cards by Grace Vieira that are available now. Each one is one of one.",
 };
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 export default async function Shop() {
   const pieces = await getAvailable();
@@ -66,7 +65,7 @@ export default async function Shop() {
           <section id="cards" style={{ paddingTop: 96, scrollMarginTop: 100 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 16, flexWrap: "wrap", marginBottom: 36 }}>
               <h2>Cards{cardPrice ? <>, <em>{formatPrice(cardPrice)} each</em></> : null}</h2>
-              <p style={{ color: "var(--muted)" }}>Small originals, hand-painted on paper.{deal && <> {deal}</>}</p>
+              <p style={{ color: "var(--muted)" }}>Small originals, hand-painted on paper. Ready to frame or give as a gift.</p>
             </div>
             <div className="grid">{cards.map((a) => <ArtCard key={a.slug} art={a} />)}</div>
           </section>

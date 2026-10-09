@@ -10,7 +10,7 @@ import s from "./piece.module.css";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return artworks.filter((a) => !a.draft).map((a) => ({ slug: a.slug }));

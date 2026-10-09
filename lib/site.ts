@@ -47,10 +47,6 @@ export const shipping = {
   canvas: 25,
 } as const;
 
-// The running deal. The discount itself lives in Square (Items > Discounts,
-// set to apply automatically), so it works at the booth and on the website.
-// This text is only what the site shows. Set to "" to hide it.
-export const deal = "Buy 2 cards, get a 3rd free. Applied at checkout.";
 
 // Most cards shown on the website at one time. The newest cards in
 // lib/artworks.ts (the ones lowest in the file) show first. When one sells,

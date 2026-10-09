@@ -10,8 +10,11 @@
 //   Pieces marked available: false in lib/artworks.ts (sold on the old Squarespace
 //   site) always stay sold.
 //
-// Results are cached for 5 minutes, so a market sale leaves the website within
-// about 5 minutes. A Square webhook can make that instant later.
+// Square is checked at most once a minute, so a booth sale or a move to the
+// "Sold out" category leaves the website within about a minute. If the Square
+// webhook is set up (app/api/square-webhook), it's close to instant.
+// If Square can't be reached, the site keeps showing the last good version
+// instead of putting sold pieces back up.
 //
 // Environment variables (set in Vercel, and in .env.local for local work):
 //   SQUARE_ACCESS_TOKEN   secret, never commit it
@@ -47,7 +50,7 @@ function limitCards(list: Artwork[]): Artwork[] {
 
 const SQUARE_VERSION = "2025-10-16";
 const SOLD_OUT_CATEGORY = "Sold out";
-const CACHE_SECONDS = 300;
+const CACHE_SECONDS = 60;
 
 const base = () =>
   process.env.SQUARE_ENVIRONMENT === "sandbox"
@@ -130,8 +133,17 @@ async function load(fresh = false): Promise<Artwork[]> {
     !fresh
   );
   const byId = new Map([...objects, ...related_objects].map((o) => [o.id, o]));
+  // Look the "Sold out" category up by name directly, so it is found even when
+  // Square leaves it out of related_objects.
+  const { objects: categories = [] } = await square<{ objects?: CatalogObject[] }>(
+    "/v2/catalog/search",
+    { object_types: ["CATEGORY"], query: { exact_query: { attribute_name: "name", attribute_value: SOLD_OUT_CATEGORY } } },
+    !fresh
+  );
   const soldOutCategoryIds = new Set(
-    related_objects.filter((o) => o.type === "CATEGORY" && o.category_data?.name === SOLD_OUT_CATEGORY).map((o) => o.id)
+    [...related_objects, ...categories]
+      .filter((o) => o.type === "CATEGORY" && o.category_data?.name?.trim().toLowerCase() === SOLD_OUT_CATEGORY.toLowerCase())
+      .map((o) => o.id)
   );
   const sold = await soldVariationIds(fresh);
   const location = process.env.SQUARE_LOCATION_ID;
@@ -159,14 +171,22 @@ async function load(fresh = false): Promise<Artwork[]> {
   });
 }
 
-/** All website pieces with live Square data. Falls back to lib/artworks.ts if Square is unreachable. */
+let lastGood: Artwork[] | undefined;
+
+/**
+ * All website pieces with live Square data.
+ * If Square can't be reached, uses the last good result. With none, it throws,
+ * and Vercel keeps serving the previous page, so sold pieces never reappear.
+ */
 export async function getArtworks(): Promise<Artwork[]> {
   if (!squareConnected()) return limitCards(local);
   try {
-    return limitCards(await load());
+    lastGood = limitCards(await load());
+    return lastGood;
   } catch (err) {
-    console.error("Square unavailable, using local data:", err);
-    return limitCards(local);
+    console.error("Square unavailable:", err);
+    if (lastGood) return lastGood;
+    throw err;
   }
 }
 
@@ -193,8 +213,9 @@ export function shippingFor(pieces: Artwork[]): number {
 
 /**
  * Creates a Square-hosted checkout page for these pieces and returns its URL.
- * Square adds sales tax and any automatic discount (like the card deal) on its own,
- * using the tax and discounts set up in the Square dashboard.
+ * Square adds sales tax on its own, using the tax set up in the Square dashboard.
+ * Discounts are off for website orders (set auto_apply_discounts to true to let
+ * Square's automatic discounts apply online too).
  */
 export async function createCheckoutLink(pieces: Artwork[], siteUrl: string): Promise<string> {
   const ship = shippingFor(pieces);
@@ -209,7 +230,7 @@ export async function createCheckoutLink(pieces: Artwork[], siteUrl: string): Pr
           quantity: "1",
           note: p.title, // website title, so Grace sees both the code and the name
         })),
-        pricing_options: { auto_apply_taxes: true, auto_apply_discounts: true },
+        pricing_options: { auto_apply_taxes: true, auto_apply_discounts: false },
       },
       checkout_options: {
         ask_for_shipping_address: true,

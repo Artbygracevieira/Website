@@ -44,9 +44,9 @@ Then open http://localhost:3000. Without a token the site still runs, using the 
 
 ## Common changes
 
-**A piece sold.** Nothing to do. Ring it up in Square as usual (C236, R4 and so on). Within about 5 minutes it leaves the shop and moves to Past Work. Marking an item "Sold out" in Square, or putting it in the "Sold out" category, does the same.
+**A piece sold.** Nothing to do. Ring it up in Square as usual (C236, R4 and so on). Within about a minute it leaves the shop and moves to Past Work. Marking an item "Sold out" in Square, or putting it in the "Sold out" category, does the same.
 
-**Change a price or photo.** Change it in Square. The site picks it up within about 5 minutes.
+**Change a price or photo.** Change it in Square. The site picks it up within about a minute.
 
 **Put a new piece on the site.** In `lib/artworks.ts`, copy an entry and fill in the website title, slug, story, size, and its Square `code`, `itemId` and `variationId`. Square keeps its short code; visitors only see the website title. Save a backup photo as `public/art/<slug>.jpg`.
 
@@ -70,8 +70,8 @@ The canvas descriptions and the About page are Grace's own words from her origin
 - [x] Shipping fee on website orders (rates in `lib/site.ts`).
 - [x] 17 October pieces linked to Square (10 paintings on paper at $100, 7 cards).
 - [ ] Confirm the paintings on paper are 9 x 12 in.
-- [x] Square: NY Sales Tax 8.875% on all items; "Buy 2 cards, get 1 free" automatic discount on the new "Cards" category (all $30 C-code cards).
-- [ ] When adding a new card in Square, put it in the "Cards" category so the deal applies.
+- [x] Square: NY Sales Tax 8.875% on all items. No discounts apply to website orders.
+- [ ] Optional: set up the Square webhook (steps in `app/api/square-webhook/route.ts`) so sold pieces leave the site instantly instead of within a minute.
 - [ ] Upgrade Vercel to Pro, then point artbygracevieira.com at the Vercel project.
 - [x] Email signup goes to the "Email Sign ups" Google Sheet (Apps Script project "ABGV email signups" on support@artbygracevieira.com).
 - [x] Signup form asks for first name, last name and email. The sheet URL is in `lib/site.ts`, so no Vercel setting is needed.

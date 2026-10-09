@@ -7,7 +7,7 @@ import { getAvailable } from "@/lib/square";
 import { events } from "@/lib/site";
 import s from "./home.module.css";
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 export default async function Home() {
   const all = await getAvailable();
@@ -70,7 +70,7 @@ export default async function Home() {
               <div>
                 <div className="eyebrow">Small originals</div>
                 <h2>Hand-painted cards{cardPrice ? <>, <em>{formatPrice(cardPrice)} each</em></> : null}</h2>
-                <p className="lead" style={{ marginTop: 16 }}>Each one is painted by hand, not printed.</p>
+                <p className="lead" style={{ marginTop: 16 }}>Each one is painted by hand, not printed. Ready to frame or give as a gift.</p>
               </div>
               <Link href="/shop#cards" className="link">See all {cards.length} cards →</Link>
             </div>

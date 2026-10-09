@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Original paintings by Grace Vieira that have already been collected.",
 };
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 export default async function PastWork() {
   const pieces = await getCollected();

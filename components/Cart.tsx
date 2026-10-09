@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { type Artwork, formatPrice } from "@/lib/artworks";
-import { deal, shipping } from "@/lib/site";
+import { shipping } from "@/lib/site";
 
 // Every piece is one of one, so the cart is just a list of slugs (no quantities).
 
@@ -136,7 +136,6 @@ function CartDrawer() {
           <div className="row" style={{ color: "var(--muted)", fontSize: 14 }}>
             <span>Sales tax</span><span>Added at checkout</span>
           </div>
-          {deal && <p className="note" style={{ marginTop: 10 }}>{deal}</p>}
           <button className="btn" style={{ width: "100%", marginTop: 16, padding: 18 }} onClick={checkout} disabled={busy || pieces.length === 0}>
             {busy ? "One moment..." : "Check out"}
           </button>
