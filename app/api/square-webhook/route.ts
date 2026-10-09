@@ -5,30 +5,36 @@ import { NextResponse } from "next/server";
 // Square calls this when something changes (a sale, an item moved to "Sold out",
 // a price edit), and the site refreshes right away instead of waiting up to a minute.
 //
-// Setup, once: in the Square Developer Dashboard, open the app whose access token
-// the site uses > Webhooks > Subscriptions > Add subscription.
-//   URL:    https://artbygracevieira.com/api/square-webhook
-//   Events: order.created, order.updated, payment.updated, catalog.version.updated
-// Then copy the subscription's Signature key into Vercel as SQUARE_WEBHOOK_SIGNATURE_KEY
-// (and SQUARE_WEBHOOK_URL if the URL above ever changes).
+// Set up in the Square Developer Console: app "New Website" > Webhooks > Subscriptions,
+// production, URL https://artbygracevieira.com/api/square-webhook, events
+// order.created, order.updated, payment.updated, catalog.version.updated.
+//
+// All this route does is clear the site's cache, so the next visit asks Square
+// again. It never changes anything in Square.
+// Optional extra check: copy the subscription's Signature key into Vercel as
+// SQUARE_WEBHOOK_SIGNATURE_KEY. Then only calls signed by Square are accepted.
 
 const WEBHOOK_URL = process.env.SQUARE_WEBHOOK_URL || "https://artbygracevieira.com/api/square-webhook";
+const MIN_GAP_MS = 10_000; // a burst of events causes one refresh, not dozens
+let lastRefresh = 0;
 
-function validSignature(body: string, signature: string | null): boolean {
-  const key = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
-  if (!key || !signature) return false;
-  const expected = createHmac("sha256", key).update(WEBHOOK_URL + body).digest("base64");
-  const a = Buffer.from(expected);
-  const b = Buffer.from(signature);
-  return a.length === b.length && timingSafeEqual(a, b);
+function validSignature(body: string, signature: string | null, key: string): boolean {
+  if (!signature) return false;
+  const expected = Buffer.from(createHmac("sha256", key).update(WEBHOOK_URL + body).digest("base64"));
+  const given = Buffer.from(signature);
+  return expected.length === given.length && timingSafeEqual(expected, given);
 }
 
 export async function POST(req: Request) {
   const body = await req.text();
-  if (!validSignature(body, req.headers.get("x-square-hmacsha256-signature"))) {
+  const key = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
+  if (key && !validSignature(body, req.headers.get("x-square-hmacsha256-signature"), key)) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
-  // Throw away the cached pages and Square data so the next visit shows what Square says now.
-  revalidatePath("/", "layout");
+  const now = Date.now();
+  if (now - lastRefresh > MIN_GAP_MS) {
+    lastRefresh = now;
+    revalidatePath("/", "layout");
+  }
   return NextResponse.json({ ok: true });
 }
