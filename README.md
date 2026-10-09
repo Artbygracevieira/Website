@@ -83,7 +83,7 @@ The canvas descriptions and the About page are Grace's own words from her origin
 
 - Every piece on the site points at an item in Square by its code (C236, S5, R4...). Square keeps those codes for the booth; the website shows its own titles.
 - **Price and photo** come from Square.
-- **Sold or not:** Square isn't tracking stock counts, so the site treats a piece as sold if it shows up in any paid Square order (booth or website), is marked "Sold out", is in the "Sold out" category, or was deleted. Square is checked every 5 minutes, and again right before checkout so nothing can be bought twice.
-- **Tax and deals:** checkout asks Square to apply its own taxes and automatic discounts, so whatever is set up in the Square dashboard applies online too. Shipping comes from `lib/site.ts`.
+- **Sold or not:** Square isn't tracking stock counts, so the site treats a piece as sold if it shows up in any paid Square order (booth or website), is marked "Sold out", is in the "Sold out" category, or was deleted. Square is checked every minute (instantly with the webhook), and again right before checkout so nothing can be bought twice.
+- **Tax:** checkout asks Square to add its own sales tax. Square discounts do not apply to website orders. Shipping comes from `lib/site.ts`.
 - **Checkout** creates a Square-hosted payment page. The order lands in Square with the code and the website title on each line.
 - In Vercel, add these environment variables: `SQUARE_ACCESS_TOKEN` (secret), `SQUARE_LOCATION_ID` = `L0FZND5FRN6MW`, `SQUARE_ENVIRONMENT` = `production`, plus `SIGNUP_SHEET_URL` (and optional `SIGNUP_SHEET_SECRET`) for email signups. Never commit the token.
