@@ -244,3 +244,66 @@ export async function createCheckoutLink(pieces: Artwork[], siteUrl: string): Pr
   );
   return data.payment_link.url;
 }
+
+export type ArchivePiece = { id: string; kind: string; image: string; format: "card" | "paper" | "canvas" };
+
+/** What kind of piece a Square code is, going by Grace's naming (C = card, CF = framed card, numbers = on paper, S/R = canvas). */
+function kindFromCode(code: string): { kind: string; format: ArchivePiece["format"] } {
+  const c = code.trim().toUpperCase();
+  if (/^CF/.test(c)) return { kind: "Framed hand-painted card", format: "card" };
+  if (/^C\d/.test(c)) return { kind: "Hand-painted card", format: "card" };
+  if (/^\d/.test(c)) return { kind: "Painting on paper", format: "paper" };
+  if (/^[SR]\d/.test(c)) return { kind: "Painting on canvas", format: "canvas" };
+  return { kind: "Original painting", format: "paper" };
+}
+
+/**
+ * Pieces Grace has moved to the "Sold out" category in Square that were never
+ * listed on the website. Shown on Past Work with their Square photo.
+ * Newest first. Returns [] if Square can't be reached.
+ */
+export async function getSoldOutArchive(): Promise<ArchivePiece[]> {
+  if (!squareConnected()) return [];
+  try {
+    const { objects: categories = [] } = await square<{ objects?: CatalogObject[] }>("/v2/catalog/search", {
+      object_types: ["CATEGORY"],
+      query: { exact_query: { attribute_name: "name", attribute_value: SOLD_OUT_CATEGORY } },
+    });
+    const categoryIds = categories.filter((c) => c.type === "CATEGORY").map((c) => c.id);
+    if (!categoryIds.length) return [];
+
+    type Item = CatalogObject & { updated_at?: string };
+    const items: Item[] = [];
+    let cursor: string | undefined;
+    do {
+      const data = await square<{ items?: Item[]; cursor?: string }>("/v2/catalog/search-catalog-items", {
+        category_ids: categoryIds,
+        limit: 100,
+        cursor,
+      });
+      items.push(...(data.items ?? []));
+      cursor = data.cursor;
+    } while (cursor);
+
+    const onSite = new Set(all.map((a) => a.square?.itemId).filter(Boolean));
+    const keep = items.filter((i) => !i.is_deleted && !onSite.has(i.id) && i.item_data?.image_ids?.length);
+
+    // Look up the photo URLs, 100 at a time.
+    const imageIds = keep.map((i) => i.item_data!.image_ids![0]);
+    const urls = new Map<string, string>();
+    for (let n = 0; n < imageIds.length; n += 100) {
+      const { objects = [] } = await square<{ objects?: CatalogObject[] }>("/v2/catalog/batch-retrieve", {
+        object_ids: imageIds.slice(n, n + 100),
+      });
+      for (const o of objects) if (o.image_data?.url) urls.set(o.id, o.image_data.url);
+    }
+
+    return keep
+      .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
+      .map((i) => ({ id: i.id, ...kindFromCode(i.item_data!.name), image: urls.get(i.item_data!.image_ids![0]) ?? "" }))
+      .filter((p) => p.image);
+  } catch (err) {
+    console.error("Could not load sold-out archive from Square:", err);
+    return [];
+  }
+}

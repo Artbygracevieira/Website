@@ -10,7 +10,7 @@ export default function ArtCard({ art, priority = false }: { art: Artwork; prior
       <div className="frame">
         {!art.available && <span className="tag">Collected</span>}
         <div className="canvas">
-          <Image src={art.image} alt={art.title} fill sizes="(max-width: 720px) 45vw, 22vw" priority={priority} />
+          <Image src={art.image} alt={`${art.title}, ${art.format === "card" ? "hand-painted card" : "original painting"} by Grace Vieira`} fill sizes="(max-width: 720px) 45vw, 22vw" priority={priority} />
         </div>
       </div>
       <div className="label">

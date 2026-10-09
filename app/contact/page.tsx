@@ -5,7 +5,9 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with Brooklyn artist Grace Vieira.",
+  description:
+    "Get in touch with Brooklyn artist Grace Vieira about a painting, a card, or an upcoming show.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function Contact() {

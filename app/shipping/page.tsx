@@ -5,7 +5,9 @@ import { shipping } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Shipping and returns",
-  description: "Shipping within the US. Paintings ship within one week. All sales are final.",
+  description:
+    "How Art by Grace Vieira ships original paintings and cards within the US, shipping costs, and the returns policy.",
+  alternates: { canonical: "/shipping" },
 };
 
 export default function Shipping() {

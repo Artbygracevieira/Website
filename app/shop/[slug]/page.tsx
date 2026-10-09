@@ -7,6 +7,8 @@ import { AddToCart } from "@/components/Cart";
 import { artworks, formatPrice } from "@/lib/artworks";
 import { getAvailable, getBySlug } from "@/lib/square";
 import s from "./piece.module.css";
+import JsonLd from "@/components/JsonLd";
+import { site } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -19,10 +21,16 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const art = await getBySlug((await params).slug);
   if (!art) return {};
+  const kind = art.format === "card" ? "hand-painted card" : art.format === "paper" ? "original painting on paper" : "original painting";
+  const lead = art.story[0]?.split(". ")[0] ?? "";
+  const description = `${art.title}, a one-of-one ${kind} by Brooklyn artist Grace Vieira. ${art.size}, ${art.medium.toLowerCase()}. ${lead}${lead.endsWith(".") ? "" : "."}`.slice(0, 300);
+  const alt = `${art.title}, ${kind} by Grace Vieira`;
   return {
-    title: art.title,
-    description: `${art.title}, an original by Grace Vieira. ${art.size}, ${art.medium.toLowerCase()}.`,
-    openGraph: { images: [art.image] },
+    title: art.available ? `${art.title}, ${kind}` : `${art.title} (collected)`,
+    description,
+    alternates: { canonical: `/shop/${art.slug}` },
+    openGraph: { type: "website", title: `${art.title} by Grace Vieira`, description, images: [{ url: art.image, alt }] },
+    twitter: { card: "summary_large_image", title: `${art.title} by Grace Vieira`, description, images: [art.image] },
   };
 }
 
@@ -31,16 +39,65 @@ export default async function Piece({ params }: Props) {
   if (!art) notFound();
   const more = (await getAvailable()).filter((a) => a.slug !== art.slug && a.format === art.format).slice(0, 4);
   const round = art.size.includes("round");
+  const kind = art.format === "card" ? "hand-painted card" : art.format === "paper" ? "original painting on paper" : "original painting";
+  const imageUrl = art.image.startsWith("http") ? art.image : `${site.url}${art.image}`;
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["Product", "VisualArtwork"],
+        name: art.title,
+        description: art.story.join(" "),
+        image: imageUrl,
+        url: `${site.url}/shop/${art.slug}`,
+        sku: art.square?.code,
+        brand: { "@type": "Brand", name: site.name },
+        creator: { "@type": "Person", name: "Grace Vieira", "@id": `${site.url}/#grace` },
+        artMedium: art.medium,
+        artform: art.format === "card" ? "Card" : "Painting",
+        size: art.size,
+        offers: {
+          "@type": "Offer",
+          price: art.price.toFixed(2),
+          priceCurrency: "USD",
+          availability: art.available ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
+          itemCondition: "https://schema.org/NewCondition",
+          url: `${site.url}/shop/${art.slug}`,
+          seller: { "@id": `${site.url}/#store` },
+          shippingDetails: {
+            "@type": "OfferShippingDetails",
+            shippingDestination: { "@type": "DefinedRegion", addressCountry: "US" },
+          },
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "US",
+            returnPolicyCategory: "https://schema.org/MerchantReturnNotPermitted",
+          },
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
+          art.available
+            ? { "@type": "ListItem", position: 2, name: "Shop", item: `${site.url}/shop` }
+            : { "@type": "ListItem", position: 2, name: "Past work", item: `${site.url}/past-work` },
+          { "@type": "ListItem", position: 3, name: art.title, item: `${site.url}/shop/${art.slug}` },
+        ],
+      },
+    ],
+  };
 
   return (
     <>
+      <JsonLd data={schema} />
       <div className={s.layout}>
         <div className={s.wall}>
           <nav className={s.crumb} aria-label="Breadcrumb">
             <Link href={art.available ? "/shop" : "/past-work"}>← {art.available ? "Shop" : "Past work"}</Link>
           </nav>
           <div className={`${s.hung} ${art.format !== "canvas" ? s.card : ""} ${round ? s.round : ""}`}>
-            <Image src={art.image} alt={art.title} fill sizes="(max-width: 900px) 80vw, 40vw" priority />
+            <Image src={art.image} alt={`${art.title}, ${kind} by Grace Vieira`} fill sizes="(max-width: 900px) 80vw, 40vw" priority />
           </div>
         </div>
 

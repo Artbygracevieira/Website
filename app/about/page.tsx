@@ -4,8 +4,10 @@ import Link from "next/link";
 import Flower, { Leaf } from "@/components/Flower";
 
 export const metadata: Metadata = {
-  title: "About Grace",
-  description: "Grace Vieira is an independent artist in Brooklyn, NY, known for vibrant botanical and abstract portraits.",
+  title: "About Grace Vieira, Brooklyn artist",
+  description:
+    "Grace Vieira is a Jamaican-born artist in Brooklyn, NY, known for vibrant botanical and abstract portraits. Her Bloom series celebrates growing on your own timeline.",
+  alternates: { canonical: "/about" },
 };
 
 export default function About() {
@@ -23,7 +25,7 @@ export default function About() {
             </p>
           </div>
           <div className="rise d2" style={{ position: "relative", aspectRatio: "4 / 5", maxWidth: 440, width: "100%", justifySelf: "end", borderRadius: "999px 999px 8px 8px", overflow: "hidden", border: "1.5px solid var(--ink)", boxShadow: "10px 10px 0 var(--ink)" }}>
-            <Image src="/photos/grace-headshot.jpg" alt="Grace Vieira" fill sizes="(max-width: 700px) 90vw, 40vw" style={{ objectFit: "cover", objectPosition: "50% 35%" }} priority />
+            <Image src="/photos/grace-headshot.jpg" alt="Portrait of artist Grace Vieira" fill sizes="(max-width: 700px) 90vw, 40vw" style={{ objectFit: "cover", objectPosition: "50% 35%" }} priority />
           </div>
         </div>
       </section>

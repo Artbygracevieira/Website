@@ -4,8 +4,10 @@ import { events, type Event } from "@/lib/site";
 import PageHead from "@/components/PageHead";
 
 export const metadata: Metadata = {
-  title: "Events",
-  description: "Markets and art shows where you can see Grace Vieira's paintings in person.",
+  title: "Events and markets",
+  description:
+    "Markets and art shows in Brooklyn and New York where you can see and buy Grace Vieira's original paintings in person.",
+  alternates: { canonical: "/events" },
 };
 
 const fmt = (iso: string) =>

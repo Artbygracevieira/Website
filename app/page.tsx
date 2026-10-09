@@ -83,7 +83,7 @@ export default async function Home() {
       <section className={`${s.meet} wall-sky`}>
         <div className={`wrap ${s.meetGrid}`}>
           <div className={s.arch}>
-            <Image src="/photos/grace-headshot.jpg" alt="Grace Vieira" fill sizes="(max-width: 860px) 90vw, 40vw" style={{ objectPosition: "50% 35%" }} />
+            <Image src="/photos/grace-headshot.jpg" alt="Portrait of artist Grace Vieira" fill sizes="(max-width: 860px) 90vw, 40vw" style={{ objectPosition: "50% 35%" }} />
           </div>
           <div>
             <div className="eyebrow">Meet the artist</div>

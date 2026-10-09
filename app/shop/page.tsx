@@ -6,8 +6,10 @@ import { formatPrice } from "@/lib/artworks";
 import { getAvailable } from "@/lib/square";
 
 export const metadata: Metadata = {
-  title: "Shop original paintings and cards",
-  description: "Original paintings and hand-painted cards by Grace Vieira that are available now. Each one is one of one.",
+  title: "Shop original paintings and hand-painted cards",
+  description:
+    "Shop one-of-one floral portrait paintings, paintings on paper and hand-painted cards by Brooklyn artist Grace Vieira. Ships within the US.",
+  alternates: { canonical: "/shop" },
 };
 
 export const revalidate = 60;

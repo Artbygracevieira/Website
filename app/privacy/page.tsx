@@ -4,7 +4,9 @@ import PageHead from "@/components/PageHead";
 
 export const metadata: Metadata = {
   title: "Privacy policy",
-  description: "What information Art by Grace Vieira collects, why, and how it is used.",
+  description:
+    "What information Art by Grace Vieira collects, why, and how it is used.",
+  alternates: { canonical: "/privacy" },
 };
 
 const updated = "October 5, 2026";
