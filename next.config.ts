@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/store", destination: "/shop", permanent: true },
       { source: "/cart", destination: "/shop", permanent: true },
+      // "Built in Bloom" was renamed "Glorious Bloom"
+      { source: "/shop/built-in-bloom", destination: "/shop/glorious-bloom", permanent: true },
       ...artworks
         .filter((a) => a.oldPath)
         .map((a) => ({ source: a.oldPath!, destination: `/shop/${a.slug}`, permanent: true })),

@@ -43,10 +43,10 @@ export type Artwork = {
 
 export const artworks: Artwork[] = [
   {
-    slug: "built-in-bloom",
+    slug: "glorious-bloom",
     wall: "mustard",
-    title: "Built in Bloom",
-    price: 400,
+    title: "Glorious Bloom",
+    price: 500,
     square: { code: "R4", itemId: "MKRYX4DVPALOJIJ4N4XACUJU", variationId: "ZXLQDWQMEGL7QYIYBM5Q56AZ" },
     available: true,
     format: "canvas",
@@ -55,9 +55,9 @@ export const artworks: Artwork[] = [
     series: "Bloom",
     story: [
       "This portrait is fully layered in hand-painted florals, with every inch of the silhouette filled with color and detail. Outlined in yellow and set against a muted terracotta background, the figure feels grounded yet vibrant.",
-      "Built in Bloom is about becoming who you are through everything you've grown through, and standing confidently in that truth.",
+      "Glorious Bloom is about becoming who you are through everything you've grown through, and standing confidently in that truth.",
     ],
-    image: "/art/built-in-bloom.jpg",
+    image: "/art/glorious-bloom.jpg",
     localPhoto: true,
     oldPath: "/store/p/floral-crown",
   },

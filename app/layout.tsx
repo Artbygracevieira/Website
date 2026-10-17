@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: site.url,
-    images: [{ url: "/art/built-in-bloom.jpg", alt: "Built in Bloom, an original floral portrait painting by Grace Vieira" }],
+    images: [{ url: "/art/glorious-bloom.jpg", alt: "Glorious Bloom, an original floral portrait painting by Grace Vieira" }],
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
