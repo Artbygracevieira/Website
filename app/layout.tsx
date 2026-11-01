@@ -8,6 +8,7 @@ import { CartProvider } from "@/components/Cart";
 import { site } from "@/lib/site";
 import { getArtworks } from "@/lib/square";
 import JsonLd from "@/components/JsonLd";
+import { Analytics } from '@vercel/analytics/next';
 
 const display = Gloock({ subsets: ["latin"], weight: "400", variable: "--font-display" });
 const accent = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--font-accent" });
@@ -87,6 +88,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <JoinList />
           <Footer />
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );
